@@ -6,13 +6,10 @@
         public string Name { get; set; }
         public DateTime DateOfBirth { get; set; }
 
-        /*Relationships:
-         * One-to-One With ContactInformation
-         */
-        // Reference Foriegn_Key F_K
+        // Foreign key property for ContactInformation is removed
         public int ContactInformationId { get; set; }
         public ContactInformation ContactInformation { get; set; }
 
-        public ICollection<Movie> Movies{ get; set; }
+        public ICollection<Movie> Movies { get; set; }
     }
 }
