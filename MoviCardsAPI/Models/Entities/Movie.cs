@@ -15,7 +15,6 @@
          * Many-to-Many With Genre
          */
 
-
         // Foreign Key for Director
         public int DirectorId { get; set; }
         public Director Director { get; set; }
