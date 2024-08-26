@@ -1,4 +1,4 @@
-﻿namespace MoviCardsAPI.Models.Entities
+﻿namespace MovieCardsAPI.Models.Entities
 {
     public class ContactInformation
     {
@@ -10,8 +10,9 @@
          * One-to-One with Director
          */
         /*  // Foreign Key for Director
-          public int DirectorId { get; set; }
           public Director Director { get; set; }*/
+        public int DirectorId { get; set; }
         public Director Director { get; set; }
+
     }
 }

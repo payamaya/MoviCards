@@ -1,4 +1,4 @@
-﻿namespace MoviCardsAPI.Models.Entities
+﻿namespace MovieCardsAPI.Models.Entities
 {
     public class Director
     {
@@ -12,7 +12,6 @@
         // Foreign Key for ContactInformation
         public int ContactInformationId { get; set; }
         public ContactInformation ContactInformation { get; set; }
-
         public ICollection<Movie> Movies { get; set; } = new List<Movie>();
     }
 }

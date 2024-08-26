@@ -1,98 +1,66 @@
 using Microsoft.EntityFrameworkCore;
-using MoviCardsAPI.Data;
-using MoviCardsAPI.Models.Entities;
 
-namespace MoviCardsAPI
+public class Program
 {
-    public class Program
+    public static async Task Main(string[] args)
     {
-        public static async Task Main(string[] args)
+        var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services.AddDbContext<MovieCardsContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("MoviCardsContext")));
+
+        builder.Services.AddControllers();
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
+
+        var app = builder.Build();
+
+        if (app.Environment.IsDevelopment())
         {
-            var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
-
-            // Register AppDbContext with the DI container
-            builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("MoviCardsContext")));
-
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
-            var app = builder.Build();
-
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-
-            app.UseHttpsRedirection();
-
-            app.UseAuthorization();
-
-            app.MapControllers();
-
-            // Create a scope to resolve services
-            using (var scope = app.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                var context = services.GetRequiredService<AppDbContext>();
-
-                // Ensure the database is created
-                context.Database.EnsureCreated();
-
-                // Call the method to add sample data
-                await AddSampleData(context);
-            }
-
-            app.Run();
+            app.UseSwagger();
+            app.UseSwaggerUI();
         }
 
-        // Sample data method
-        public static async Task AddSampleData(AppDbContext context)
+        app.UseHttpsRedirection();
+        app.UseAuthorization();
+        app.MapControllers();
+
+        using (var scope = app.Services.CreateScope())
         {
-            var contactInformation = new ContactInformation
-            {
-                Email = "director@example.com",
-                PhoneNumber = 123456789
-            };
+            var services = scope.ServiceProvider;
+            var context = services.GetRequiredService<MovieCardsContext>();
 
-            var director = new Director
-            {
-                Name = "John Doe",
-                DateOfBirth = new DateTime(1975, 1, 1),
-                ContactInformation = contactInformation
-            };
+            context.Database.EnsureCreated();
 
-            var actor1 = new Actor
-            {
-                Name = "Actor One",
-                DateOfBirth = new DateTime(1985, 6, 15)
-            };
-          
-
-            var genre1 = new Genre
-            {
-                Name = "Action"
-            };
-
-            var movie = new Movie
-            {
-                Title = "Sample Movie",
-                Rating = 5,
-                ReleaseDate = DateTime.UtcNow,
-                Description = "A sample movie description.",
-                Director = director,
-                Actors = new List<Actor> { actor1 },
-                Genres = new List<Genre> { genre1 }
-            };
-
-            context.Movies.Add(movie);
-            await context.SaveChangesAsync();
+            // Uncomment and adjust if necessary
+            // await AddSampleData(context);
         }
+
+        app.Run();
     }
+
+    // Uncomment and update this method to test data addition if needed
+    /*
+    public static async Task AddSampleData(MovieCardsContext context)
+    {
+        var contactInformation = new ContactInformation
+        {
+            Email = "director@example.com",
+            PhoneNumber = 123456789
+        };
+
+        var director = new Director
+        {
+            Name = "John Doe",
+            DateOfBirth = new DateTime(1975, 1, 1),
+            ContactInformation = contactInformation
+        };
+
+        context.ContactInformations.Add(contactInformation);
+        context.Directors.Add(director);
+        await context.SaveChangesAsync();
+
+        // Add more data if needed
+    }
+    */
 }

@@ -1,4 +1,6 @@
-﻿namespace MoviCardsAPI.Models.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace MovieCardsAPI.Models.Entities
 {
     public class Movie
     {
@@ -7,7 +9,6 @@
         public int Rating { get; set; }
         public DateTime ReleaseDate { get; set; }
         public string Description { get; set; }
-
         /* 
          * Relationships:
          * One-to-Many with Director
@@ -15,11 +16,12 @@
          * Many-to-Many With Genre
          */
 
-        // Foreign Key for Director
         public int DirectorId { get; set; }
         public Director Director { get; set; }
 
-        public ICollection<Actor> Actors { get; set; } = new List<Actor>();
-        public ICollection<Genre> Genres { get; set; } = new List<Genre>();
+        public ICollection<MovieActor> MovieActors { get; set; } = new List<MovieActor>();
+        public ICollection<MovieGenre> MovieGenres { get; set; } = new List<MovieGenre>();
     }
 }
+
+
