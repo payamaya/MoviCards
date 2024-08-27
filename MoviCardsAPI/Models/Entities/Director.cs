@@ -13,5 +13,7 @@
         public int ContactInformationId { get; set; }
         public ContactInformation ContactInformation { get; set; }
         public ICollection<Movie> Movies { get; set; } = new List<Movie>();
+
     }
+    
 }

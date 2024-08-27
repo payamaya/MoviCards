@@ -93,6 +93,10 @@ namespace MovieCardsAPI.Controllers
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
 
+         /* 
+          * FIX IMPORTANT
+          * var movieDto = new MovieDTO(movie.Id,movie.Title,movie.Rating,movie.ReleaseDate);*/
+
             return CreatedAtAction(nameof(GetMovie), new { id = movie.Id }, movie);
         }
 
