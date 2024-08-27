@@ -10,6 +10,9 @@ namespace MovieCardsAPI.Controllers
 {
     [Route("api/movies")]
     [ApiController]
+
+    /*For Swagger*/
+    [Produces("application/json")]
     public class MoviesController : ControllerBase
     {
         private readonly MovieCardsContext _context;

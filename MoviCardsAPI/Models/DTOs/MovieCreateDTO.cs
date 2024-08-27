@@ -1,6 +1,7 @@
 ﻿namespace MovieCardsAPI.Models.DTOs
 {
     public record MovieCreateDTO(string Title, int Rating, DateTime ReleaseDate, string Description, int DirectorId, List<int> ActorIds, List<int> GenreIds);
+}
 
     /* Make it record important
     public class MovieCreateDTO
