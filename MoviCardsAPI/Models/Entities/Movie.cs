@@ -20,6 +20,7 @@ namespace MovieCardsAPI.Models.Entities
 
         public ICollection<MovieActor> MovieActors { get; set; } = new List<MovieActor>();
         public ICollection<MovieGenre> MovieGenres { get; set; } = new List<MovieGenre>();
+        public string DirectorName { get; internal set; }
 
         // Constructor to ensure non-nullable properties are set
         public Movie(string title, string description, Director director)

@@ -10,6 +10,8 @@ public class Program
             options.UseSqlServer(builder.Configuration.GetConnectionString("MoviCardsContext")));
 
         builder.Services.AddControllers();
+     /*   builder.Services.AddAutoMapper<MovieCardsContext>();*/
+
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 

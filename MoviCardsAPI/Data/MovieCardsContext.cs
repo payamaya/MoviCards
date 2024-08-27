@@ -74,5 +74,14 @@ public class MovieCardsContext : DbContext
         modelBuilder.Entity<ContactInformation>()
             .Property(ci => ci.PhoneNumber)
             .IsRequired();
+
+      /*  modelBuilder.Entity<Movie>()
+            .HasMany(d=>d.MovieActors)
+            .WithMany(a=>a.MovieId)
+            .UsingEntity<Movie>(
+            )*/
+
     }
+  
+
 }
