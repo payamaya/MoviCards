@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MovieCardsAPI.Migrations
 {
     [DbContext(typeof(MovieCardsContext))]
-    [Migration("20240826142529_Init")]
-    partial class Init
+    [Migration("20240828151344_Post")]
+    partial class Post
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,13 +32,9 @@ namespace MovieCardsAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -58,8 +54,7 @@ namespace MovieCardsAPI.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PhoneNumber")
                         .HasColumnType("int");
@@ -93,6 +88,15 @@ namespace MovieCardsAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Directors");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ContactInformationId = 0,
+                            DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Director One"
+                        });
                 });
 
             modelBuilder.Entity("MovieCardsAPI.Models.Entities.Genre", b =>
@@ -105,8 +109,7 @@ namespace MovieCardsAPI.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -121,13 +124,9 @@ namespace MovieCardsAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("ActorId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DirectorId")
                         .HasColumnType("int");
@@ -146,8 +145,6 @@ namespace MovieCardsAPI.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ActorId");
 
                     b.HasIndex("DirectorId");
 
@@ -199,10 +196,6 @@ namespace MovieCardsAPI.Migrations
 
             modelBuilder.Entity("MovieCardsAPI.Models.Entities.Movie", b =>
                 {
-                    b.HasOne("MovieCardsAPI.Models.Entities.Actor", null)
-                        .WithMany("Movies")
-                        .HasForeignKey("ActorId");
-
                     b.HasOne("MovieCardsAPI.Models.Entities.Director", "Director")
                         .WithMany("Movies")
                         .HasForeignKey("DirectorId")
@@ -257,14 +250,11 @@ namespace MovieCardsAPI.Migrations
             modelBuilder.Entity("MovieCardsAPI.Models.Entities.Actor", b =>
                 {
                     b.Navigation("MovieActors");
-
-                    b.Navigation("Movies");
                 });
 
             modelBuilder.Entity("MovieCardsAPI.Models.Entities.Director", b =>
                 {
-                    b.Navigation("ContactInformation")
-                        .IsRequired();
+                    b.Navigation("ContactInformation");
 
                     b.Navigation("Movies");
                 });

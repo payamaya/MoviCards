@@ -17,8 +17,7 @@ namespace MovieCardsAPI.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -46,7 +45,7 @@ namespace MovieCardsAPI.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -59,7 +58,7 @@ namespace MovieCardsAPI.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PhoneNumber = table.Column<int>(type: "int", nullable: false),
                     DirectorId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -83,19 +82,13 @@ namespace MovieCardsAPI.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Rating = table.Column<int>(type: "int", nullable: false),
                     ReleaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DirectorId = table.Column<int>(type: "int", nullable: false),
-                    ActorId = table.Column<int>(type: "int", nullable: true),
                     GenreId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Movies", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Movies_Actors_ActorId",
-                        column: x => x.ActorId,
-                        principalTable: "Actors",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Movies_Directors_DirectorId",
                         column: x => x.DirectorId,
@@ -157,6 +150,11 @@ namespace MovieCardsAPI.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Directors",
+                columns: new[] { "Id", "ContactInformationId", "DateOfBirth", "Name" },
+                values: new object[] { 1, 0, new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Director One" });
+
             migrationBuilder.CreateIndex(
                 name: "IX_ContactInformations_DirectorId",
                 table: "ContactInformations",
@@ -172,11 +170,6 @@ namespace MovieCardsAPI.Migrations
                 name: "IX_MovieGenre_GenreId",
                 table: "MovieGenre",
                 column: "GenreId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Movies_ActorId",
-                table: "Movies",
-                column: "ActorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Movies_DirectorId",
@@ -202,10 +195,10 @@ namespace MovieCardsAPI.Migrations
                 name: "MovieGenre");
 
             migrationBuilder.DropTable(
-                name: "Movies");
+                name: "Actors");
 
             migrationBuilder.DropTable(
-                name: "Actors");
+                name: "Movies");
 
             migrationBuilder.DropTable(
                 name: "Directors");

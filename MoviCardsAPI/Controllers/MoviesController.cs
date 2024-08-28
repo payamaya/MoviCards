@@ -216,6 +216,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieCardsAPI.Models.DTOs;
+using MovieCardsAPI.Models.DTOs.MovieCardsAPI.Models.DTOs;
 using MovieCardsAPI.Models.Entities;
 using NuGet.Packaging;
 
@@ -252,13 +253,13 @@ namespace MovieCardsAPI.Controllers
                       m.ReleaseDate,
                       m.Description))
                   .ToListAsync();*/
-            var dto = _context.Movies/*.Include(m => m.Director)*/.Select(m => new MovieDTO(m.Id,m.Title,  m.Rating, m.ReleaseDate,m.Description));
+            var dto = _context.Movies/*.Include(m => m.Director)*/.Select(m => new MovieDTO(m.Id,m.Title, m.Rating, m.ReleaseDate,m.Description));
 
             return Ok(await dto.ToListAsync());
         }
 
         // GET: api/movies/{id}
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int}, Name = \"RouteNameForGetOne\"")]
 
         /* SWAGGER 
                  [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StudentDetailsDto))]
@@ -284,12 +285,14 @@ namespace MovieCardsAPI.Controllers
          var dto = await _mapper.ProjectTo<MovieDetailsDTO>(_context.Movies.Where(m => m.Id == id)).FirstOrDefaultAsync();
 
             if (dto == null)
-                return NotFound();
+               { 
+                return NotFound(); 
+            }
 
             return Ok(dto);
         }
 
-        // GET: api/movies/{id}/details
+  /*      // GET: api/movies/{id}/details
         [HttpGet("{id}/details")]
         public async Task<ActionResult<MovieDetailsDTO>> GetMovieDetails(int id)
         {
@@ -300,61 +303,38 @@ namespace MovieCardsAPI.Controllers
                     .ThenInclude(ma => ma.Actor)
                 .Include(m => m.MovieGenres)
                     .ThenInclude(mg => mg.Genre)
-                .Where(m => m.Id == id)
-                .Select(m => new MovieDetailsDTO(
-                    m.Id,
-                    m.Title,
-                    m.Rating,
-                    m.ReleaseDate,
-                    m.Description,
-                    m.Director.Name,
-                    m.MovieActors.Select(ma => ma.Actor.Name).ToList(),
-                    m.MovieGenres.Select(mg => mg.Genre.Name).ToList(),
-                    m.Director.ContactInformation.Email,
-                    m.Director.ContactInformation.PhoneNumber.ToString()))
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(m => m.Id == id);
 
             if (movie == null)
                 return NotFound();
+            var directorName = movie.Director?.Name ?? "Unknown";
+            var email = movie.Director?.ContactInformation?.Email ?? "No Email";
+            var phoneNumber = movie.Director?.ContactInformation?.PhoneNumber.ToString() ?? "No Phone Number";
+            
+            var movieDetailsDTO = new MovieDetailsDTO(
+            movie.Id,
+            movie.Title,
+            movie.Rating,
+            movie.ReleaseDate,
+            movie.Description,
+            directorName,
+            movie.MovieActors?.Select(ma => ma.Actor.Name).ToList() ?? new List<string>(),
+            movie.MovieGenres?.Select(mg => mg.Genre.Name).ToList() ?? new List<string>(),
+           email,
+           phoneNumber
+      );
 
-            return Ok(movie);
-        }
+            return Ok(movieDetailsDTO);
+        }*/
 
-        // POST: api/movies
-        [HttpPost]
-        public async Task<ActionResult<MovieDTO>> CreateMovie(MovieCreateDTO dto)
-        {
-           /* var movie = new Movie
-            {
-                Title = dto.Title,
-                Rating = dto.Rating,
-                ReleaseDate = dto.ReleaseDate,
-                Description = dto.Description,
-                DirectorId = dto.DirectorId
-            };
 
-            _context.Movies.Add(movie);
-            await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetMovie), new { id = movie.Id }, new MovieDTO(
-                movie.Id,
-                movie.Title,
-                movie.Rating,
-                movie.ReleaseDate,
-                movie.Description));*/
-           var movie = _mapper.Map<Movie>(dto);
-            _context.Movies.Add(movie); 
-            await _context.SaveChangesAsync();
-             
-            var movieDto = _mapper.Map<MovieDTO>(dto);
-            return CreatedAtAction(nameof(CreateMovie), new { id = movieDto.Id}, movieDto);
-        }
 
         // PUT: api/movies/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateMovie(int id, [FromBody] MovieUpdateDTO dto)
+        public async Task<IActionResult> UpdateMovie(int id, MovieUpdateDTO dto)
         {
-            if (id <= 0 || dto == null)
+            if (id != dto.Id)
             {
                 return BadRequest("Invalid movie ID or data.");
             }
@@ -370,6 +350,7 @@ namespace MovieCardsAPI.Controllers
                             .FirstOrDefaultAsync(m => m.Id == id);*/
 
             var movieFromDB = await _context.Movies.Include(m => m.Director).FirstOrDefaultAsync(m => m.Id == id);
+
             if ((movieFromDB is null))
             {
                 return NotFound($"Movie with ID {id} not found.");
@@ -412,13 +393,39 @@ namespace MovieCardsAPI.Controllers
             catch (DbUpdateException ex)
             {
                 // Log the exception and return an appropriate error response
-                return StatusCode(500, "An error occurred while updating the movie.");
+              /*  return StatusCode(500, "An error occurred while updating the movie.");*/
+
+                if (!MovieExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
 
             return NoContent();
         }
 
 
+        // POST: api/movies
+        [HttpPost]
+        public async Task<ActionResult<MovieDTO>> CreateMovie(MovieCreateDTO dto)
+        {
+            // Map from MovieCreateDTO to Movie entity
+            var movie = _mapper.Map<Movie>(dto);
+
+
+
+            _context.Movies.Add(movie);
+            await _context.SaveChangesAsync();
+
+            // Map the saved Movie entity to MovieDTO for the response
+            var movieDTO = _mapper.Map<MovieDTO>(movie);
+
+            return CreatedAtAction(nameof(GetMovie), new { id = movieDTO.Id }, movieDTO);
+        }
         // DELETE: api/movies/{id}
         [HttpDelete("{id}")]
         /* SWAGGER 
