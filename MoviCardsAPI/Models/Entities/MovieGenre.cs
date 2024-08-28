@@ -1,11 +1,15 @@
-﻿namespace MovieCardsAPI.Models.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MovieCardsAPI.Models.Entities
 {
     public class MovieGenre
     {
+        [ForeignKey("MovieId")]
+        public Movie?  Movie { get; set; }
         public int MovieId { get; set; }
-        public Movie Movie { get; set; }
 
+        [ForeignKey("GenreId")]
+        public Genre? Genre { get; set; }
         public int GenreId { get; set; }
-        public Genre Genre { get; set; }
     }
 }

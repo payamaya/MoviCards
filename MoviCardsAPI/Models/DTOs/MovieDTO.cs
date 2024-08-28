@@ -11,7 +11,7 @@
        Use record for immutability, value-based equality, and when you prefer 
       concise syntax.
     */
-    public record MovieDTO(int Id, string Title, int Rating, DateTime ReleaseDate, string Description, string DirectorName);
+    public record MovieDTO(int Id, string Title, int Rating, DateTime ReleaseDate, string Description );
 
     /*
        Use class when you need mutability, more complex behavior, or when you 

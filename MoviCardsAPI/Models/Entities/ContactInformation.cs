@@ -1,4 +1,6 @@
-﻿namespace MovieCardsAPI.Models.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MovieCardsAPI.Models.Entities
 {
     public class ContactInformation
     {
@@ -11,8 +13,9 @@
          */
         /*  // Foreign Key for Director
           public Director Director { get; set; }*/
+/*        [ForeignKey("DirectorId")]*/
+        public Director? Director { get; set; }
         public int DirectorId { get; set; }
-        public Director Director { get; set; }
 
     }
 }

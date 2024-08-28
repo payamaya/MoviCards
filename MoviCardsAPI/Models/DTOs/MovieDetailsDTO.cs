@@ -1,7 +1,16 @@
 ﻿namespace MovieCardsAPI.Models.DTOs
 {
-    public record MovieDetailsDTO(int Id, string Title, int Rating, DateTime ReleaseDate, string Description, string DirectorName, 
-        List<string> ActorNames, List<string> GenreNames, string DirectorContactEmail, string DirectorContactPhone) : MovieDTO(Id, Title, Rating, ReleaseDate, Description, DirectorName);
+    public record MovieDetailsDTO(
+      int Id,
+      string Title,
+      int Rating,
+      DateTime ReleaseDate,
+      string Description,
+      string DirectorName,
+      List<string> ActorNames,
+      List<string> GenreNames,
+      string DirectorContactEmail,
+      string DirectorContactPhone) : MovieDTO(Id, Title, Rating, ReleaseDate, Description);
 
     /*   public class MovieDetailsDTO : MovieDTO
         {

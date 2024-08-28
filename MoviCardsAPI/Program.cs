@@ -21,6 +21,7 @@ public class Program
         {
             app.UseSwagger();
             app.UseSwaggerUI();
+/*            await app.SeeDataAsync();*/
         }
 
         app.UseHttpsRedirection();

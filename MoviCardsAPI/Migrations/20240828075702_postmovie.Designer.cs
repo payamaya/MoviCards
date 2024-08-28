@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MovieCardsAPI.Migrations
 {
     [DbContext(typeof(MovieCardsContext))]
-    partial class MovieCardsContextModelSnapshot : ModelSnapshot
+    [Migration("20240828075702_postmovie")]
+    partial class postmovie
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,7 +37,8 @@ namespace MovieCardsAPI.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -54,7 +58,8 @@ namespace MovieCardsAPI.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("PhoneNumber")
                         .HasColumnType("int");
@@ -88,15 +93,6 @@ namespace MovieCardsAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Directors");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ContactInformationId = 0,
-                            DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Director One"
-                        });
                 });
 
             modelBuilder.Entity("MovieCardsAPI.Models.Entities.Genre", b =>
@@ -109,7 +105,8 @@ namespace MovieCardsAPI.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
