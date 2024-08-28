@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using MovieCardsAPI.Data;
+using MovieCardsAPI.Models.Entities;
 
 public class Program
 {
@@ -11,6 +13,8 @@ public class Program
 
         builder.Services.AddControllers();
      /*   builder.Services.AddAutoMapper<MovieCardsContext>();*/
+ /*    builder.Services.AddAutoMapper<MovieCardsContext>();*/;
+        builder.Services.AddAutoMapper(typeof(MapperProfile));
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
@@ -42,28 +46,5 @@ public class Program
         app.Run();
     }
 
-    // Uncomment and update this method to test data addition if needed
-    /*
-    public static async Task AddSampleData(MovieCardsContext context)
-    {
-        var contactInformation = new ContactInformation
-        {
-            Email = "director@example.com",
-            PhoneNumber = 123456789
-        };
 
-        var director = new Director
-        {
-            Name = "John Doe",
-            DateOfBirth = new DateTime(1975, 1, 1),
-            ContactInformation = contactInformation
-        };
-
-        context.ContactInformations.Add(contactInformation);
-        context.Directors.Add(director);
-        await context.SaveChangesAsync();
-
-        // Add more data if needed
-    }
-    */
 }
