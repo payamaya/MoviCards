@@ -11,11 +11,20 @@ public class Program
         builder.Services.AddDbContext<MovieCardsContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("MoviCardsContext")));
 
+        /* Add services to the container*/
         builder.Services.AddControllers();
-     /*   builder.Services.AddAutoMapper<MovieCardsContext>();*/
- /*    builder.Services.AddAutoMapper<MovieCardsContext>();*/;
-        builder.Services.AddAutoMapper(typeof(MapperProfile));
 
+        /*   
+             builder.Services.AddScoped<>
+             builder.Services.AddSingleton<>
+             builder.Services.AddTransient<>
+        */
+
+        /*   builder.Services.AddAutoMapper<MovieCardsContext>();*/
+        /*    builder.Services.AddAutoMapper<MovieCardsContext>();*/
+        
+        builder.Services.AddAutoMapper(typeof(MapperProfile));
+        // Learn more about configuration Swagger/OpenAPI at https://aka.ms/aspnetcore/swachbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
@@ -25,11 +34,13 @@ public class Program
         {
             app.UseSwagger();
             app.UseSwaggerUI();
-/*            await app.SeeDataAsync();*/
+            await app.SeedDataAsync();
         }
 
         app.UseHttpsRedirection();
+
         app.UseAuthorization();
+
         app.MapControllers();
 
         using (var scope = app.Services.CreateScope())

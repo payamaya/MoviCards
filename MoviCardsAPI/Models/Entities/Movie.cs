@@ -16,8 +16,8 @@ namespace MovieCardsAPI.Models.Entities
         public Director Director { get; set; }
 
         // Navigation properties for many-to-many relationships
-        public ICollection<MovieActor> MovieActors { get; set; } = new List<MovieActor>();
-        public ICollection<MovieGenre> MovieGenres { get; set; } = new List<MovieGenre>();
+        public ICollection<MovieActor>? MovieActors { get; set; }
+        public ICollection<MovieGenre>? MovieGenres { get; set; }
 
         /*   // Constructor to ensure non-nullable properties are set
            public Movie(string title, string description, Director director)

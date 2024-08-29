@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MovieCardsAPI.Migrations
 {
     [DbContext(typeof(MovieCardsContext))]
-    [Migration("20240828153810_AddPUTREQUEST")]
-    partial class AddPUTREQUEST
+    [Migration("20240829084016_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -7,6 +7,9 @@ namespace MovieCardsAPI.Data
 {
     public class MapperProfile : Profile
     {
+     /* 
+      In the constructor we create our mapping*
+     */
         public MapperProfile()
         {
             // Mapping from Movie to various DTOs

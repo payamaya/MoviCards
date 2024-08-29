@@ -218,7 +218,6 @@ using Microsoft.EntityFrameworkCore;
 using MovieCardsAPI.Models.DTOs;
 using MovieCardsAPI.Models.DTOs.MovieCardsAPI.Models.DTOs;
 using MovieCardsAPI.Models.Entities;
-using NuGet.Packaging;
 
 namespace MovieCardsAPI.Controllers
 {
@@ -238,6 +237,7 @@ namespace MovieCardsAPI.Controllers
             _context = context;
            /* _mapper = mapper;*/
            this._mapper = mapper;
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/movies
@@ -283,6 +283,14 @@ namespace MovieCardsAPI.Controllers
                     ))
                 .FirstOrDefaultAsync();*/
          var dto = await _mapper.ProjectTo<MovieDetailsDTO>(_context.Movies.Where(m => m.Id == id)).FirstOrDefaultAsync();
+
+          /*
+           * This works as well
+           * var dto2 = await _context.Movies
+                .Where(m => m.Id == id)
+                .ProjectTo<MovieDetailsDTO>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync();
+          */
 
             if (dto == null)
                { 
@@ -410,9 +418,20 @@ namespace MovieCardsAPI.Controllers
 
 
         // POST: api/movies
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=21223754
         [HttpPost]
         public async Task<ActionResult<MovieDTO>> CreateMovie(MovieCreateDTO dto)
         {
+            /*
+             If we remove [ApiController] 
+             Then we should validate/manage manually by ourselves
+             if(!ModelState.isValid)
+             {
+             return BadRequest();
+             }
+             
+             */
+
             // Map from MovieCreateDTO to Movie entity
             var movie = _mapper.Map<Movie>(dto);
 

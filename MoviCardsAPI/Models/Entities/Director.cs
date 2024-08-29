@@ -8,6 +8,8 @@ namespace MovieCardsAPI.Models.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        [Required(ErrorMessage = "Director name is requires field")]
+        [MaxLength(30,ErrorMessage = "Maximum length for the Name is 30 characters.")]
         public string Name { get; set; }
         public DateTime DateOfBirth { get; set; }
 

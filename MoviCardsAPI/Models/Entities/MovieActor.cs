@@ -9,7 +9,6 @@ namespace MovieCardsAPI.Models.Entities
         public int MovieId { get; set; }
 
         [ForeignKey("ActorId")]
-
         public Actor? Actor { get; set; }
         public int ActorId { get; set; }
     }
