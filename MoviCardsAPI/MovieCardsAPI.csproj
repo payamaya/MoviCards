@@ -25,4 +25,8 @@
     <Folder Include="Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Movies.Shared\Movies.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

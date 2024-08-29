@@ -80,39 +80,45 @@ namespace MovieCardsAPI.Data
 
         private static IEnumerable<Movie> GenerateMovies(int count, List<Director> directors, List<Actor> actors, List<Genre> genres)
         {
+            var movies = new List<Movie>();
             var faker = new Faker<Movie>("sv").Rules((f, m) =>
             {
                 m.Title = f.Lorem.Sentence(3);
                 m.Rating = f.Random.Int(1, 5);
                 m.ReleaseDate = f.Date.Past(20);
                 m.Description = f.Lorem.Paragraph();
-                m.DirectorId = f.PickRandom(directors).Id;
-                m.MovieActors = GenerateMovieActors(actors).ToList();
-                m.MovieGenres = GenerateMovieGenres(genres).ToList();
+                m.DirectorId = f.PickRandom(directors).Id; // Assuming DirectorId is Guid
+                m.MovieActors = GenerateMovieActors(actors, m.Id).ToList();
+                m.MovieGenres = GenerateMovieGenres(genres, m.Id).ToList();
             });
 
-            return faker.Generate(count);
+            movies.AddRange(faker.Generate(count));
+
+            return movies;
         }
 
-        private static IEnumerable<MovieActor> GenerateMovieActors(List<Actor> actors)
+        private static IEnumerable<MovieActor> GenerateMovieActors(List<Actor> actors, Guid movieId)
         {
             var faker = new Faker<MovieActor>("sv").Rules((f, ma) =>
             {
-                ma.ActorId = f.PickRandom(actors).Id;
+                ma.ActorId = f.PickRandom(actors).Id; // Assuming ActorId is Guid
+                ma.MovieId = movieId; // Set correct MovieId
             });
 
             return faker.Generate(2); // Generate 2 actors per movie
         }
 
-        private static IEnumerable<MovieGenre> GenerateMovieGenres(List<Genre> genres)
+        private static IEnumerable<MovieGenre> GenerateMovieGenres(List<Genre> genres, Guid movieId)
         {
             var faker = new Faker<MovieGenre>("sv").Rules((f, mg) =>
             {
-                mg.GenreId = f.PickRandom(genres).Id;
+                mg.GenreId = f.PickRandom(genres).Id; // Assuming GenreId is Guid
+                mg.MovieId = movieId; // Set correct MovieId
             });
 
             return faker.Generate(1); // Generate 1 genre per movie
         }
+
     }
 }
   

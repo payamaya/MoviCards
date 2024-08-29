@@ -86,9 +86,6 @@ public class MovieCardsContext : DbContext
 
 }
 */
-using Microsoft.EntityFrameworkCore;
-using MovieCardsAPI.Models.Entities;
-
 public class MovieCardsContext : DbContext
 {
     public DbSet<Movie> Movies { get; set; }
@@ -108,18 +105,40 @@ public class MovieCardsContext : DbContext
         modelBuilder.Entity<MovieGenre>()
             .HasKey(mg => new { mg.MovieId, mg.GenreId });
 
+        // Configure relationships
+        modelBuilder.Entity<MovieActor>()
+            .HasOne(ma => ma.Movie)
+            .WithMany(m => m.MovieActors)
+            .HasForeignKey(ma => ma.MovieId);
+
+        modelBuilder.Entity<MovieActor>()
+            .HasOne(ma => ma.Actor)
+            .WithMany(a => a.MovieActors)
+            .HasForeignKey(ma => ma.ActorId);
+
+        modelBuilder.Entity<MovieGenre>()
+            .HasOne(mg => mg.Movie)
+            .WithMany(m => m.MovieGenres)
+            .HasForeignKey(mg => mg.MovieId);
+
+        modelBuilder.Entity<MovieGenre>()
+            .HasOne(mg => mg.Genre)
+            .WithMany(g => g.MovieGenres)
+            .HasForeignKey(mg => mg.GenreId);
+
         // Configure one-to-one relationship between Director and ContactInformation
         modelBuilder.Entity<Director>()
             .HasOne(d => d.ContactInformation)
             .WithOne(ci => ci.Director)
             .HasForeignKey<ContactInformation>(ci => ci.DirectorId);
 
-        // Seed data for testing
+        // Seed data
         modelBuilder.Entity<Director>().HasData(
-            new Director { Id = 1, Name = "Director One", DateOfBirth = new DateTime(1970, 1, 1) }
-            // Add more seeding here
+            new Director { Id = Guid.NewGuid(), Name = "Director One", DateOfBirth = new DateTime(1970, 1, 1) }
         );
 
         // Add seeding for Movies, Actors, Genres, and ContactInformations as needed.
     }
+
+
 }

@@ -15,9 +15,8 @@ namespace MovieCardsAPI.Migrations
                 name: "Actors",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -28,11 +27,10 @@ namespace MovieCardsAPI.Migrations
                 name: "Directors",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ContactInformationId = table.Column<int>(type: "int", nullable: false)
+                    ContactInformationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -43,9 +41,8 @@ namespace MovieCardsAPI.Migrations
                 name: "Genres",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -56,11 +53,10 @@ namespace MovieCardsAPI.Migrations
                 name: "ContactInformations",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<int>(type: "int", nullable: false),
-                    DirectorId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DirectorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -77,14 +73,12 @@ namespace MovieCardsAPI.Migrations
                 name: "Movies",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Rating = table.Column<int>(type: "int", nullable: false),
                     ReleaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DirectorId = table.Column<int>(type: "int", nullable: false),
-                    GenreId = table.Column<int>(type: "int", nullable: true)
+                    DirectorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -95,19 +89,14 @@ namespace MovieCardsAPI.Migrations
                         principalTable: "Directors",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Movies_Genres_GenreId",
-                        column: x => x.GenreId,
-                        principalTable: "Genres",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "MovieActor",
                 columns: table => new
                 {
-                    MovieId = table.Column<int>(type: "int", nullable: false),
-                    ActorId = table.Column<int>(type: "int", nullable: false)
+                    MovieId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ActorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -130,8 +119,8 @@ namespace MovieCardsAPI.Migrations
                 name: "MovieGenre",
                 columns: table => new
                 {
-                    MovieId = table.Column<int>(type: "int", nullable: false),
-                    GenreId = table.Column<int>(type: "int", nullable: false)
+                    MovieId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    GenreId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -153,7 +142,7 @@ namespace MovieCardsAPI.Migrations
             migrationBuilder.InsertData(
                 table: "Directors",
                 columns: new[] { "Id", "ContactInformationId", "DateOfBirth", "Name" },
-                values: new object[] { 1, 0, new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Director One" });
+                values: new object[] { new Guid("2bd537bf-5d96-460e-9c81-165f2c742ea0"), new Guid("00000000-0000-0000-0000-000000000000"), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Director One" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ContactInformations_DirectorId",
@@ -175,11 +164,6 @@ namespace MovieCardsAPI.Migrations
                 name: "IX_Movies_DirectorId",
                 table: "Movies",
                 column: "DirectorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Movies_GenreId",
-                table: "Movies",
-                column: "GenreId");
         }
 
         /// <inheritdoc />
@@ -198,13 +182,13 @@ namespace MovieCardsAPI.Migrations
                 name: "Actors");
 
             migrationBuilder.DropTable(
+                name: "Genres");
+
+            migrationBuilder.DropTable(
                 name: "Movies");
 
             migrationBuilder.DropTable(
                 name: "Directors");
-
-            migrationBuilder.DropTable(
-                name: "Genres");
         }
     }
 }

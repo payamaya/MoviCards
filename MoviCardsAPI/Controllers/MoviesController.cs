@@ -212,12 +212,9 @@ using (var stream= new FileStream(path,FileMode.Create))
 }
 return Ok("Your file has been uploaded successfully");
 }*/
-using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MovieCardsAPI.Models.DTOs;
-using MovieCardsAPI.Models.DTOs.MovieCardsAPI.Models.DTOs;
-using MovieCardsAPI.Models.Entities;
+
+
+using AutoMapper.QueryableExtensions;
 
 namespace MovieCardsAPI.Controllers
 {
@@ -253,13 +250,14 @@ namespace MovieCardsAPI.Controllers
                       m.ReleaseDate,
                       m.Description))
                   .ToListAsync();*/
-            var dto = _context.Movies/*.Include(m => m.Director)*/.Select(m => new MovieDTO(m.Id,m.Title, m.Rating, m.ReleaseDate,m.Description));
+         /*   var dto = _context.Movies*//*.Include(m => m.Director)*//*.Select(m => new MovieDTO(m.Title, m.Rating, m.ReleaseDate,m.Description));*/
+            IEnumerable<MovieDTO> movieDTOs = await _context.Movies.ProjectTo<MovieDTO>(_mapper.ConfigurationProvider).ToListAsync();
 
-            return Ok(await dto.ToListAsync());
+            return Ok(movieDTOs);
         }
 
         // GET: api/movies/{id}
-        [HttpGet("{id:int}, Name = \"RouteNameForGetOne\"")]
+        [HttpGet("{id:guid}, Name = \"RouteNameForGetOne\"")]
 
         /* SWAGGER 
                  [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StudentDetailsDto))]
@@ -269,7 +267,7 @@ namespace MovieCardsAPI.Controllers
                 [SwaggerResponse(StatusCodes.Status200OK, "The student was found", Type = typeof(StudentDetailsDto))]
                 [SwaggerResponse(StatusCodes.Status404NotFound, "The student was not found")]
          */
-        public async Task<ActionResult<MovieDetailsDTO>> GetMovie(int id)
+        public async Task<ActionResult<MovieDetailsDTO>> GetMovie(Guid id)
         {
          /*   var movie = await _context.Movies
                 .Include(m => m.Director)
@@ -339,8 +337,8 @@ namespace MovieCardsAPI.Controllers
 
 
         // PUT: api/movies/{id}
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateMovie(int id, MovieUpdateDTO dto)
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateMovie(Guid id, MovieUpdateDTO dto)
         {
             if (id != dto.Id)
             {
@@ -446,12 +444,12 @@ namespace MovieCardsAPI.Controllers
             return CreatedAtAction(nameof(GetMovie), new { id = movieDTO.Id }, movieDTO);
         }
         // DELETE: api/movies/{id}
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:guid}")]
         /* SWAGGER 
           [ProducesResponseType(StatusCodes.Status204NoContent)]
           [ProducesResponseType(StatusCodes.Status404NotFound)]
         */
-        public async Task<IActionResult> DeleteMovie(int id)
+        public async Task<IActionResult> DeleteMovie(Guid id)
         {
             var movie = await _context.Movies.FindAsync(id);
             if (movie == null)
@@ -465,6 +463,6 @@ namespace MovieCardsAPI.Controllers
             return NoContent();
         }
 
-        private bool MovieExists(int id) => _context.Movies.Any(m => m.Id == id);
+        private bool MovieExists(Guid id) => _context.Movies.Any(m => m.Id == id);
     }
 }

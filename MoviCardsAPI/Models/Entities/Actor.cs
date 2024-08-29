@@ -6,8 +6,8 @@ namespace MovieCardsAPI.Models.Entities
     public class Actor
     {
         [Key]
-        public int Id { get; set; }
-        public string Name { get; set; }
+        public Guid Id { get; set; }
+        public string? Name { get; set; }
      /*   public DateTime DateOfBirth { get; set; }*/
 
         // Navigation property for the many-to-many relationship with Movies

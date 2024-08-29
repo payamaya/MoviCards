@@ -7,7 +7,7 @@ namespace MovieCardsAPI.Models.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         [Required(ErrorMessage = "Director name is requires field")]
         [MaxLength(30,ErrorMessage = "Maximum length for the Name is 30 characters.")]
         public string Name { get; set; }
@@ -19,9 +19,9 @@ namespace MovieCardsAPI.Models.Entities
         // Foreign Key for ContactInformation
         [ForeignKey("ContactInformationId")]
         public ContactInformation? ContactInformation { get; set; }
-        public int ContactInformationId { get; set; }
+        public Guid ContactInformationId { get; set; }
 
-        public ICollection<Movie> Movies { get; set; } = new List<Movie>();
+        public ICollection<Movie>? Movies { get; set; }
 
     }
     

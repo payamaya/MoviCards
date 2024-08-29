@@ -6,10 +6,10 @@ namespace MovieCardsAPI.Models.Entities
     {
         [ForeignKey("MovieId")]
         public Movie?  Movie { get; set; }
-        public int MovieId { get; set; }
+        public Guid MovieId { get; set; }
 
         [ForeignKey("GenreId")]
         public Genre? Genre { get; set; }
-        public int GenreId { get; set; }
+        public Guid GenreId { get; set; }
     }
 }

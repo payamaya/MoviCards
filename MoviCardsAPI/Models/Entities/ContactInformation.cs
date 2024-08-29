@@ -1,21 +1,24 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MovieCardsAPI.Models.Entities
 {
     public class ContactInformation
     {
-        public int Id { get; set; }
-        public string Email { get; set; }
-        public int PhoneNumber { get; set; }
+        [Key]
+        public Guid Id { get; set; }
 
-        /* Relationships:
-         * One-to-One with Director
-         */
-        /*  // Foreign Key for Director
-          public Director Director { get; set; }*/
-/*        [ForeignKey("DirectorId")]*/
-        public Director? Director { get; set; }
-        public int DirectorId { get; set; }
+        [Required]
+        [MaxLength(100)]
+        public string? Email { get; set; }
 
+        [Required]
+        public string? PhoneNumber { get; set; }
+
+        public Guid DirectorId { get; set; } // Foreign key property
+
+        // Navigation property
+        public Director Director { get; set; }
     }
 }

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MovieCardsAPI.Migrations
 {
     [DbContext(typeof(MovieCardsContext))]
-    [Migration("20240829084016_Init")]
+    [Migration("20240829155929_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -26,14 +26,11 @@ namespace MovieCardsAPI.Migrations
 
             modelBuilder.Entity("MovieCardsAPI.Models.Entities.Actor", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -43,21 +40,21 @@ namespace MovieCardsAPI.Migrations
 
             modelBuilder.Entity("MovieCardsAPI.Models.Entities.ContactInformation", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("DirectorId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("DirectorId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("PhoneNumber")
-                        .HasColumnType("int");
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -69,21 +66,20 @@ namespace MovieCardsAPI.Migrations
 
             modelBuilder.Entity("MovieCardsAPI.Models.Entities.Director", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ContactInformationId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ContactInformationId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.HasKey("Id");
 
@@ -92,8 +88,8 @@ namespace MovieCardsAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
-                            ContactInformationId = 0,
+                            Id = new Guid("2bd537bf-5d96-460e-9c81-165f2c742ea0"),
+                            ContactInformationId = new Guid("00000000-0000-0000-0000-000000000000"),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Director One"
                         });
@@ -101,14 +97,11 @@ namespace MovieCardsAPI.Migrations
 
             modelBuilder.Entity("MovieCardsAPI.Models.Entities.Genre", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -118,21 +111,16 @@ namespace MovieCardsAPI.Migrations
 
             modelBuilder.Entity("MovieCardsAPI.Models.Entities.Movie", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DirectorId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("GenreId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("DirectorId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Rating")
                         .HasColumnType("int");
@@ -141,25 +129,22 @@ namespace MovieCardsAPI.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DirectorId");
 
-                    b.HasIndex("GenreId");
-
                     b.ToTable("Movies");
                 });
 
             modelBuilder.Entity("MovieCardsAPI.Models.Entities.MovieActor", b =>
                 {
-                    b.Property<int>("MovieId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("MovieId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("ActorId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("MovieId", "ActorId");
 
@@ -170,11 +155,11 @@ namespace MovieCardsAPI.Migrations
 
             modelBuilder.Entity("MovieCardsAPI.Models.Entities.MovieGenre", b =>
                 {
-                    b.Property<int>("MovieId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("MovieId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("GenreId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("GenreId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("MovieId", "GenreId");
 
@@ -201,10 +186,6 @@ namespace MovieCardsAPI.Migrations
                         .HasForeignKey("DirectorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("MovieCardsAPI.Models.Entities.Genre", null)
-                        .WithMany("Movies")
-                        .HasForeignKey("GenreId");
 
                     b.Navigation("Director");
                 });
@@ -262,8 +243,6 @@ namespace MovieCardsAPI.Migrations
             modelBuilder.Entity("MovieCardsAPI.Models.Entities.Genre", b =>
                 {
                     b.Navigation("MovieGenres");
-
-                    b.Navigation("Movies");
                 });
 
             modelBuilder.Entity("MovieCardsAPI.Models.Entities.Movie", b =>
