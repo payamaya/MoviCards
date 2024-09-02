@@ -8,16 +8,17 @@ namespace MovieCardsAPI.Models.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
-        public string? Title { get; set; }
+        public string Title { get; set; }
         public int Rating { get; set; }
         public DateTime ReleaseDate { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
+
         public Guid DirectorId { get; set; }
         public Director Director { get; set; }
 
         // Navigation properties for many-to-many relationships
-        public ICollection<MovieActor>? MovieActors { get; set; }
-        public ICollection<MovieGenre>? MovieGenres { get; set; }
+        public ICollection<MovieActor> MovieActors { get; set; }
+        public ICollection<MovieGenre> MovieGenres { get; set; }
 
         /*   // Constructor to ensure non-nullable properties are set
            public Movie(string title, string description, Director director)

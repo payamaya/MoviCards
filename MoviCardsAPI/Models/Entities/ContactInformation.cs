@@ -19,6 +19,6 @@ namespace MovieCardsAPI.Models.Entities
         public Guid DirectorId { get; set; } // Foreign key property
 
         // Navigation property
-        public Director Director { get; set; }
+        public Director? Director { get; set; }
     }
 }

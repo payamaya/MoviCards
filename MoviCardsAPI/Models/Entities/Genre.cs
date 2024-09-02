@@ -8,7 +8,7 @@ namespace MovieCardsAPI.Models.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
-        public string? Name { get; set; }
+        public string Name { get; set; }
 
         // Navigation property for the many-to-many relationship with Movies
         /*public ICollection<Movie> Movies { get; set; }= new List<Movie>();*/

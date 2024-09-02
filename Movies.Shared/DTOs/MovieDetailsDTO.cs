@@ -4,11 +4,11 @@ namespace Movies.Shared.DTOs
     public class MovieDetailsDTO
     {
         public Guid Id { get; set; }
-        public string? Title { get; set; }
+        public string Title { get; set; }
         public int Rating { get; set; }
         public DateTime ReleaseDate { get; set; }
-        public string? Description { get; set; }
-        public string? DirectorName { get; set; }
+        public string Description { get; set; }
+        public string DirectorName { get; set; }
         public List<string> ActorNames { get; set; }
         public List<string> GenreNames { get; set; }
         public string? DirectorContactEmail { get; set; }

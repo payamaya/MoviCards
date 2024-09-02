@@ -77,7 +77,7 @@ namespace MovieCardsAPI.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Rating = table.Column<int>(type: "int", nullable: false),
                     ReleaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DirectorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -140,9 +140,19 @@ namespace MovieCardsAPI.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Actors",
+                columns: new[] { "Id", "Name" },
+                values: new object[] { new Guid("f1239c30-36ef-4229-a8dd-73594fe5d4f4"), "Actor One" });
+
+            migrationBuilder.InsertData(
                 table: "Directors",
                 columns: new[] { "Id", "ContactInformationId", "DateOfBirth", "Name" },
-                values: new object[] { new Guid("2bd537bf-5d96-460e-9c81-165f2c742ea0"), new Guid("00000000-0000-0000-0000-000000000000"), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Director One" });
+                values: new object[] { new Guid("10ad7235-f92a-4317-95fd-78849aae9c8d"), new Guid("00000000-0000-0000-0000-000000000000"), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Director One" });
+
+            migrationBuilder.InsertData(
+                table: "Genres",
+                columns: new[] { "Id", "Name" },
+                values: new object[] { new Guid("30ebcc29-597e-4188-ae2a-fefefec639d8"), "Genre One" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ContactInformations_DirectorId",

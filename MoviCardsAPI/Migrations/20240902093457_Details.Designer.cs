@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MovieCardsAPI.Migrations
 {
     [DbContext(typeof(MovieCardsContext))]
-    partial class MovieCardsContextModelSnapshot : ModelSnapshot
+    [Migration("20240902093457_Details")]
+    partial class Details
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,7 +40,7 @@ namespace MovieCardsAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("163f98c2-be1c-4ed5-a748-740b5a79025a"),
+                            Id = new Guid("27c1df6b-29a2-47d4-aa73-9878de661727"),
                             Name = "Actor One"
                         });
                 });
@@ -92,7 +95,7 @@ namespace MovieCardsAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("96a40028-35a7-42a9-a23f-6c9ab6a58789"),
+                            Id = new Guid("e24b0650-e7d3-4910-9878-cd92772fbff2"),
                             ContactInformationId = new Guid("00000000-0000-0000-0000-000000000000"),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Director One"
@@ -115,7 +118,7 @@ namespace MovieCardsAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("57286e34-bb36-431e-8b4a-4595785c426a"),
+                            Id = new Guid("df7a7b3f-7eb6-4861-a769-e2bc92172ae5"),
                             Name = "Genre One"
                         });
                 });

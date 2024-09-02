@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MovieCardsAPI.Migrations
 {
     [DbContext(typeof(MovieCardsContext))]
-    [Migration("20240829155929_Init")]
-    partial class Init
+    [Migration("20240902094039_Detail")]
+    partial class Detail
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,6 +36,13 @@ namespace MovieCardsAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Actors");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("163f98c2-be1c-4ed5-a748-740b5a79025a"),
+                            Name = "Actor One"
+                        });
                 });
 
             modelBuilder.Entity("MovieCardsAPI.Models.Entities.ContactInformation", b =>
@@ -88,7 +95,7 @@ namespace MovieCardsAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("2bd537bf-5d96-460e-9c81-165f2c742ea0"),
+                            Id = new Guid("96a40028-35a7-42a9-a23f-6c9ab6a58789"),
                             ContactInformationId = new Guid("00000000-0000-0000-0000-000000000000"),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Director One"
@@ -107,6 +114,13 @@ namespace MovieCardsAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Genres");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("57286e34-bb36-431e-8b4a-4595785c426a"),
+                            Name = "Genre One"
+                        });
                 });
 
             modelBuilder.Entity("MovieCardsAPI.Models.Entities.Movie", b =>
@@ -116,7 +130,6 @@ namespace MovieCardsAPI.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("DirectorId")
@@ -235,7 +248,8 @@ namespace MovieCardsAPI.Migrations
 
             modelBuilder.Entity("MovieCardsAPI.Models.Entities.Director", b =>
                 {
-                    b.Navigation("ContactInformation");
+                    b.Navigation("ContactInformation")
+                        .IsRequired();
 
                     b.Navigation("Movies");
                 });

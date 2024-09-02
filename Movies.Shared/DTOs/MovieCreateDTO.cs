@@ -25,37 +25,8 @@
 
 namespace Movies.Shared.DTOs
 {
-    /*  public record MovieDTO(int Id, string Title, int Rating, DateTime ReleaseDate, string Description, string DirectorName);*/
 
-    /*    public record MovieDetailsDTO(
-            int Id,
-            string Title,
-            int Rating,
-            DateTime ReleaseDate,
-            string Description,
-            string DirectorName,
-            List<string> ActorNames,
-            List<string> GenreNames,
-            string DirectorContactEmail,
-            string DirectorContactPhone) : MovieDTO(Id, Title, Rating, ReleaseDate, Description, DirectorName);*/
-
-    public record MovieCreateDTO
+    public record MovieCreateDTO:MovieManipulationDTO
     {
-        public string? Title { get; init; }
-        public int Rating { get; init; }
-        public DateTime ReleaseDate { get; init; }
-        public string? Description { get; init; }
-        public Guid DirectorId { get; init; }
-        public List<Guid>  ActorIds { get; init; }
-        public List<Guid> GenreIds { get; init; }
     }
-
-    /* public record MovieUpdateDTO(
-         string Title,
-         int Rating,
-         DateTime ReleaseDate,
-         string Description,
-         int DirectorId,
-         List<int> ActorIds,
-         List<int> GenreIds);*/
 }

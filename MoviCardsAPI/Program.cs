@@ -12,7 +12,7 @@ public class Program
             options.UseSqlServer(builder.Configuration.GetConnectionString("MoviCardsContext")));
 
         /* Add services to the container*/
-        builder.Services.AddControllers();
+        builder.Services.AddControllers().AddNewtonsoftJson();
 
         /*   
              builder.Services.AddScoped<>

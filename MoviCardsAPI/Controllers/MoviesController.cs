@@ -1,220 +1,5 @@
-﻿/*using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore; // Ensure this is the correct namespace where MovieCardsContext is located
-using MovieCardsAPI.Models.DTOs;
-using MovieCardsAPI.Models.Entities;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace MovieCardsAPI.Controllers
-{
-    [Route("api/movies")]
-    [ApiController]
-
-    *//*For Swagger*//*
-    [Produces("application/json")]
-    public class MoviesController : ControllerBase
-    {
-        private readonly MovieCardsContext _context;
-
-        public MoviesController(MovieCardsContext context)
-        {
-            _context = context;
-        }
-
-        // GET: api/movies
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<MovieDTO>>> GetMovies()
-        {
-            var dto = _context.Movies*//*.Includes(m => m.Director)*//*.Select(m => new MovieDTO(m.Id, m.Title, m.Rating, m.ReleaseDate, m.Description, m.DirectorName));
-            return Ok(await dto.ToListAsync());
-        }
-
-        // GET: api/movies/{id}
-        [HttpGet("{id}")]
-        public async Task<ActionResult<MovieDetailsDTO>> GetMovie(int id)
-        {
-            var dto = await _context.Movies
-                .Where(m => m.Id == id)
-                .Include(m => m.Director)
-                .Include(m => m.MovieActors)
-                    .ThenInclude(ma => ma.Actor)
-                .Include(m => m.MovieGenres)
-                    .ThenInclude(mg => mg.Genre)
-                .Select(m => new MovieDetailsDTO(
-                    m.Id,
-                    m.Title,
-                    m.Rating,
-                    m.ReleaseDate,
-                    m.Description,
-                    m.Director.Name,
-                    m.MovieActors.Select(ma => ma.Actor.Name).ToList(),
-                    m.MovieGenres.Select(mg => mg.Genre.Name).ToList(),
-                    m.Director.ContactInformation.Email,
-                    m.Director.ContactInformation.PhoneNumber.ToString()
-                ))
-                .FirstOrDefaultAsync();
-
-            if (dto == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(dto);
-        }
-
-
-        // PUT: api/movies/{id}
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutMovie(int id, Movie movie)
-        {
-            if (id != movie.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(movie).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MovieExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/movies
-        *//*  [HttpPost]
-          public async Task<IActionResult> CreateMovie([FromBody] MovieCreateDTO movieCreateDTO)
-          {
-              if (!ModelState.IsValid)
-              {
-                  return BadRequest(ModelState);
-              }
-
-              var movie = new Movie
-              {
-                  Title = movieCreateDTO.Title,
-                  Rating = movieCreateDTO.Rating,
-                  ReleaseDate = movieCreateDTO.ReleaseDate,
-                  Description = movieCreateDTO.Description,
-                  DirectorId = movieCreateDTO.DirectorId,
-                  MovieActors = movieCreateDTO.ActorIds.Select(id => new MovieActor { ActorId = id }).ToList(),
-                  MovieGenres = movieCreateDTO.GenreIds.Select(id => new MovieGenre { GenreId = id }).ToList()
-              };
-
-              // Add additional logic to handle ActorIds and GenreIds if needed
-
-              _context.Movies.Add(movie);
-              await _context.SaveChangesAsync();
-
-           *//* 
-            * FIX IMPORTANT
-            * var movieDto = new MovieDTO(movie.Id,movie.Title,movie.Rating,movie.ReleaseDate);*//*
-
-              return CreatedAtAction(nameof(GetMovie), new { id = movie.Id }, movie);
-          }*//*
-
-
-
-
-        // POST: api/Movies
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=21223754
-        [HttpPost]
-
-        public async Task<ActionResult<Movie>> PostMovie(MovieCreateDTO dto)
-        {
-            var movie = new Movie
-            {
-                Title = dto.Title,
-                Rating = dto.Rating,
-                ReleaseDate = dto.ReleaseDate,
-                Description = dto.Description,
-                DirectorId = dto.DirectorId,
-
-  
-            };
-
-            _context.Movies.Add(movie);
-            await _context.SaveChangesAsync();
-
-            var movieDTO = new MovieDTO(
-              movie.Id,movie.Title,
-              movie.Rating,movie.ReleaseDate,
-              movie.Description,movie.DirectorName
-              );
-            return CreatedAtAction(nameof(GetMovie), new { id = movieDTO.Id}, movieDTO);
-        }
-
-
-
-
-        // DELETE: api/movies/{id}
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMovie(int id)
-        {
-            var movie = await _context.Movies.FindAsync(id);
-            if (movie == null)
-            {
-                return NotFound();
-            }
-
-            _context.Movies.Remove(movie);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool MovieExists(int id)
-        {
-            return _context.Movies.Any(e => e.Id == id);
-        }
-   
-
-       *//* public async Task<IEnumerable<Movie>> GetMoviesAsync()
-        {
-        return await _context.Movies
-            .Include(m => m.Director)
-            .Include(m => m.MovieActors)
-                .ThenInclude(ma => ma.Actor)
-            .Include(m => m.MovieGenres)
-                .ThenInclude(mg => mg.Genre)
-            .ToListAsync();
-        }*//*
-
-    }
-}
-
-
-
-*//* public async Task<ActionResult> CreateFile(IFormFile file)
-{
-if(file.Length==0 || file.Length> 20971520 || file.ContentType != "application/pdf"){
-  return BadRequest("No file or invalid one has been inputted");
-}
-var path = Path.Combine(
-  Directory.GetCurrentDirectory(),
-  $"uploaded_file_{Guid.NewGuid()}.pdf");
-using (var stream= new FileStream(path,FileMode.Create))
-{
-  await file.CopyToAsync(stream); 
-}
-return Ok("Your file has been uploaded successfully");
-}*/
-
-
-using AutoMapper.QueryableExtensions;
+﻿using AutoMapper.QueryableExtensions;
+using MovieCardsAPI.Validations;
 
 namespace MovieCardsAPI.Controllers
 {
@@ -225,113 +10,206 @@ namespace MovieCardsAPI.Controllers
     public class MoviesController : ControllerBase
     {
         private readonly MovieCardsContext _context;
-       /* private object mapper;*/
-       private readonly IMapper _mapper;
+        /* private object mapper;*/
+        private readonly IMapper _mapper;
 
 
         public MoviesController(MovieCardsContext context, IMapper mapper)
         {
             _context = context;
-           /* _mapper = mapper;*/
-           this._mapper = mapper;
+            /* _mapper = mapper;*/
+            this._mapper = mapper;
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        // GET: api/movies
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<MovieDTO>>> GetMovies()
-        {
-            /*  var movies = await _context.Movies
-                  .Include(m => m.Director)
-                  .Select(m => new MovieDTO(
-                      m.Id,
-                      m.Title,
-                      m.Rating,
-                      m.ReleaseDate,
-                      m.Description))
-                  .ToListAsync();*/
-         /*   var dto = _context.Movies*//*.Include(m => m.Director)*//*.Select(m => new MovieDTO(m.Title, m.Rating, m.ReleaseDate,m.Description));*/
-            IEnumerable<MovieDTO> movieDTOs = await _context.Movies.ProjectTo<MovieDTO>(_mapper.ConfigurationProvider).ToListAsync();
+                // GET: api/movies
+         [HttpGet]
+         public async Task<ActionResult<IEnumerable<MovieDTO>>> GetMovies()
+         {
+             IEnumerable<MovieDTO> movieDTOs = await _context.Movies.ProjectTo<MovieDTO>(_mapper.ConfigurationProvider).ToListAsync();
 
-            return Ok(movieDTOs);
+             return Ok(movieDTOs);
+         }
+         [HttpGet("{title} Name = \"RouteByTitle\"")]
+         public async Task<ActionResult<IEnumerable<MovieDetailsDTO>>> GetMoviesByTitle(string title)
+                {
+                    var moviesByTitle = await _context.Movies.ProjectTo<MovieDetailsDTO>(_mapper.ConfigurationProvider).ToListAsync();
+
+                    if (!string.IsNullOrWhiteSpace(title))
+                    {
+                        moviesByTitle = moviesByTitle.Where(m => m.Title.Contains(title, StringComparison.OrdinalIgnoreCase)).ToList();
+                    }
+
+                    return Ok(moviesByTitle);
+
+                }   
+         [HttpGet("{genre} Name = \"RouteByGenre\"")]
+         public async Task<ActionResult<IEnumerable<MovieDetailsDTO>>> GetMoviesByGenre(string genre)
+                {
+                    try
+                    {
+                        if (string.IsNullOrWhiteSpace(genre))
+                        {
+                            return BadRequest("Genre cannot be empty.");
+                        }
+
+                        // Filter the movies by genre before projecting to DTO
+                        var moviesByGenre = await _context.Movies
+                            .Where(m => m.MovieGenres.Any(mg => mg.Genre.Name.ToLower() == genre.ToLower()))
+                            .ProjectTo<MovieDetailsDTO>(_mapper.ConfigurationProvider)
+                            .ToListAsync();
+
+                        return Ok(moviesByGenre);
+                    }
+                    catch (Exception ex)
+                    {
+                        // Handle the exception and return a proper error response
+                        return StatusCode(500, $"Internal server error: {ex.Message}");
+                    }
+                }
+
+        [HttpGet("search", Name = "SearchMovies")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<MovieDetailsDTO>>> GetMovies(
+            Guid? id,
+            string? title,
+            string?genre, 
+            DateTime? releaseDate, 
+            int? rating, 
+            string? sortBy="title",// Default sorting by title
+            string? sortOrder= "asc" // Default sorting order is ascending
+            )
+        {
+            try
+            {
+                if (!SortOrderValidator.IsValidSortOrder(sortOrder))
+                {
+                    return BadRequest("Invalid sort order. Please Use 'asc' or 'desc'.");
+                }
+                var sortFields = SortOrderValidator.IsValidSortBy(sortBy) 
+                    ? sortBy.Split(',', StringSplitOptions.RemoveEmptyEntries) 
+                    : new[] { "title" };
+                var isDescending = sortOrder?.ToLower() == "desc";
+                //Fetch all movies
+                var query = _context.Movies.AsQueryable();
+
+                //Appply flters based on the provided parameters
+                if (id.HasValue)
+                {
+                    query = query.Where(m => m.Id == id.Value);
+                }
+          
+                if (!string.IsNullOrWhiteSpace(title))
+                {
+                    string lowerCaseTitle = title.ToLower();
+                    query = query.Where(m => m.Title.ToLower().Contains(lowerCaseTitle));
+                }
+
+                if (!string.IsNullOrWhiteSpace(genre)) 
+                {
+                query= query.Where(m => m.MovieGenres.Any(mg => mg.Genre.Name.ToLower() == genre.ToLower()));   
+                }
+
+                if (releaseDate.HasValue)
+                { 
+                    query = query.Where(m => m.ReleaseDate.Date == releaseDate.Value.Date);
+                }
+
+                if (rating.HasValue) 
+                {
+                    query = query.Where(m => m.Rating == rating.Value);
+                }
+                if (!string.IsNullOrEmpty(sortBy))
+                {
+                  
+                foreach (var field in sortFields)
+                {
+
+                   switch (sortBy?.ToLower())
+                   {
+                       case "title":
+                                query = isDescending 
+                                    ? query.OrderByDescending(m => m.Title) 
+                                    : query.OrderBy(m => m.Title);
+                                break;
+                   
+                       case "rating":
+                               query = isDescending
+                               ?query.OrderByDescending(m => m.Rating)
+                               :query.OrderBy(m => m.Rating);
+                           break; 
+                   
+                       case "releasDate":
+                               query = isDescending
+                               ?query.OrderByDescending(m =>m.ReleaseDate)
+                               :query.OrderBy(m => m.ReleaseDate);
+                           break;
+                   
+                       default:
+                         //Fallback to tile soring if sortBy is not recognized
+                         query = sortOrder?.ToLower()=="desc"
+                             ? query.OrderByDescending(m => m.Title)
+                             : query.OrderBy(m => m.Title);
+                         
+                        break;
+                       }
+                   }
+                }
+                
+                var movies = await query.ProjectTo<MovieDetailsDTO>(_mapper.ConfigurationProvider).ToListAsync();
+
+            return Ok(movies);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+
+            }
         }
 
-        // GET: api/movies/{id}
-        [HttpGet("{id:guid}, Name = \"RouteNameForGetOne\"")]
+      /*  // GET: api/movies/{id}
+        [HttpGet("{id:guid} Name = \"RouteNameForGetOne\"")]
 
-        /* SWAGGER 
+        *//* SWAGGER 
                  [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StudentDetailsDto))]
                 [ProducesResponseType(StatusCodes.Status404NotFound)]
 
                 [SwaggerOperation(Summary = "Get a student by id", Description = "Get a student by id", OperationId = "GetStudentById")]
                 [SwaggerResponse(StatusCodes.Status200OK, "The student was found", Type = typeof(StudentDetailsDto))]
                 [SwaggerResponse(StatusCodes.Status404NotFound, "The student was not found")]
-         */
-        public async Task<ActionResult<MovieDetailsDTO>> GetMovie(Guid id)
+         *//*
+        public async Task<ActionResult<MovieDetailsDTO>> GetMovieById(Guid id)
         {
-         /*   var movie = await _context.Movies
-                .Include(m => m.Director)
-                .Where(m => m.Id == id)
-                .Select(m => new MovieDTO(
-                    m.Id,
-                    m.Title,
-                    m.Rating,
-                    m.ReleaseDate,
-                    m.Description
-                    ))
-                .FirstOrDefaultAsync();*/
-         var dto = await _mapper.ProjectTo<MovieDetailsDTO>(_context.Movies.Where(m => m.Id == id)).FirstOrDefaultAsync();
+    
+            var dto = await _mapper.ProjectTo<MovieDetailsDTO>(_context.Movies.Where(m => m.Id == id)).FirstOrDefaultAsync();
 
-          /*
-           * This works as well
-           * var dto2 = await _context.Movies
-                .Where(m => m.Id == id)
-                .ProjectTo<MovieDetailsDTO>(_mapper.ConfigurationProvider)
-                .FirstOrDefaultAsync();
-          */
+            *//*
+             * This works as well
+             * var dto2 = await _context.Movies
+                  .Where(m => m.Id == id)
+                  .ProjectTo<MovieDetailsDTO>(_mapper.ConfigurationProvider)
+                  .FirstOrDefaultAsync();
+            *//*
 
             if (dto == null)
-               { 
-                return NotFound(); 
+            {
+                return NotFound();
             }
 
             return Ok(dto);
-        }
-
-  /*      // GET: api/movies/{id}/details
-        [HttpGet("{id}/details")]
-        public async Task<ActionResult<MovieDetailsDTO>> GetMovieDetails(int id)
-        {
-            var movie = await _context.Movies
-                .Include(m => m.Director)
-                    .ThenInclude(d => d.ContactInformation)
-                .Include(m => m.MovieActors)
-                    .ThenInclude(ma => ma.Actor)
-                .Include(m => m.MovieGenres)
-                    .ThenInclude(mg => mg.Genre)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (movie == null)
-                return NotFound();
-            var directorName = movie.Director?.Name ?? "Unknown";
-            var email = movie.Director?.ContactInformation?.Email ?? "No Email";
-            var phoneNumber = movie.Director?.ContactInformation?.PhoneNumber.ToString() ?? "No Phone Number";
-            
-            var movieDetailsDTO = new MovieDetailsDTO(
-            movie.Id,
-            movie.Title,
-            movie.Rating,
-            movie.ReleaseDate,
-            movie.Description,
-            directorName,
-            movie.MovieActors?.Select(ma => ma.Actor.Name).ToList() ?? new List<string>(),
-            movie.MovieGenres?.Select(mg => mg.Genre.Name).ToList() ?? new List<string>(),
-           email,
-           phoneNumber
-      );
-
-            return Ok(movieDetailsDTO);
         }*/
+
+        // GET: api/movies/{id}/details
+        [HttpGet("{id:guid}/details")]
+        public async Task<ActionResult<MovieDetailsDTO>> GetMovieDetails(Guid id)
+        {
+          var dto = await _mapper.ProjectTo<MovieDetailsDTO>(_context.Movies.Where(m => m.Id != id)).FirstOrDefaultAsync(); 
+            if (dto == null) return NotFound();
+
+            return Ok(dto);
+        }
 
 
 
@@ -340,85 +218,25 @@ namespace MovieCardsAPI.Controllers
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateMovie(Guid id, MovieUpdateDTO dto)
         {
-            if (id != dto.Id)
-            {
-                return BadRequest("Invalid movie ID or data.");
-            }
-
-            /* var movieFromDb= await _context.Movies.FirstOrDefaultAsync(m => m.Id == id);
-             mapper.Map(movieFromDb, dto);*/
-            /*
-                        var movie = await _context.Movies
-                            .Include(m => m.MovieActors)
-                                .ThenInclude(ma => ma.Actor)
-                            .Include(m => m.MovieGenres)
-                                .ThenInclude(mg => mg.Genre)
-                            .FirstOrDefaultAsync(m => m.Id == id);*/
+            if (id != dto.Id) return BadRequest("Invalid movie ID or data.");
 
             var movieFromDB = await _context.Movies.Include(m => m.Director).FirstOrDefaultAsync(m => m.Id == id);
 
-            if ((movieFromDB is null))
-            {
-                return NotFound($"Movie with ID {id} not found.");
-            }
+            if ((movieFromDB is null)) return NotFound($"Movie with ID {id} not found.");
+
             _mapper.Map(dto, movieFromDB);
+            await _context.SaveChangesAsync();
 
-     /*       // Update the movie details
-            movie.Title = dto.Title;
-            movie.Rating = dto.Rating;
-            movie.ReleaseDate = dto.ReleaseDate;
-            movie.Description = dto.Description;
-            movie.DirectorId = dto.DirectorId;
 
-            // Update actors and genres associations
-            movie.MovieActors.Clear();
-            movie.MovieGenres.Clear();
-
-            if (dto.ActorIds != null)
-            {
-                var actors = await _context.Actors.Where(a => dto.ActorIds.Contains(a.Id)).ToListAsync();
-                foreach (var actor in actors)
-                {
-                    movie.MovieActors.Add(new MovieActor { MovieId = movie.Id, ActorId = actor.Id });
-                }
-            }
-
-            if (dto.GenreIds != null)
-            {
-                var genres = await _context.Genres.Where(g => dto.GenreIds.Contains(g.Id)).ToListAsync();
-                foreach (var genre in genres)
-                {
-                    movie.MovieGenres.Add(new MovieGenre { MovieId = movie.Id, GenreId = genre.Id });
-                }
-            }*/
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                // Log the exception and return an appropriate error response
-              /*  return StatusCode(500, "An error occurred while updating the movie.");*/
-
-                if (!MovieExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            /*return NoContent();*/
+            return Ok(_mapper.Map<MovieDTO>(movieFromDB));// For demo!
         }
 
 
         // POST: api/movies
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=21223754
         [HttpPost]
-        public async Task<ActionResult<MovieDTO>> CreateMovie(MovieCreateDTO dto)
+        public async Task<ActionResult<MovieDTO>> CreateMovie(Guid id, MovieCreateDTO dto)
         {
             /*
              If we remove [ApiController] 
@@ -429,11 +247,16 @@ namespace MovieCardsAPI.Controllers
              }
              
              */
+             // Ensure that all referenced IDs are valid
+    if (!await _context.Directors.AnyAsync(d => d.Id == dto.DirectorId) ||
+        !await _context.Actors.AnyAsync(a => dto.ActorIds.Contains(a.Id)) ||
+        !await _context.Genres.AnyAsync(g => dto.GenreIds.Contains(g.Id)))
+    {
+        return BadRequest("Invalid IDs provided.");
+    }
 
             // Map from MovieCreateDTO to Movie entity
             var movie = _mapper.Map<Movie>(dto);
-
-
 
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
@@ -441,7 +264,7 @@ namespace MovieCardsAPI.Controllers
             // Map the saved Movie entity to MovieDTO for the response
             var movieDTO = _mapper.Map<MovieDTO>(movie);
 
-            return CreatedAtAction(nameof(GetMovie), new { id = movieDTO.Id }, movieDTO);
+            return CreatedAtAction(nameof(Queryable), new { id = movieDTO.Id }, movieDTO);
         }
         // DELETE: api/movies/{id}
         [HttpDelete("{id:guid}")]
@@ -453,8 +276,8 @@ namespace MovieCardsAPI.Controllers
         {
             var movie = await _context.Movies.FindAsync(id);
             if (movie == null)
-               { 
-                return NotFound(); 
+            {
+                return NotFound();
             }
 
             _context.Movies.Remove(movie);
@@ -462,6 +285,9 @@ namespace MovieCardsAPI.Controllers
 
             return NoContent();
         }
+        /*
+                [HttpPatch("{id:guid")]
+                public async Task<ActionResult> PtachMovies(Guid id)*/
 
         private bool MovieExists(Guid id) => _context.Movies.Any(m => m.Id == id);
     }
