@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Domain.Models\Domain.Models.csproj" />
     <ProjectReference Include="..\Movies.Shared\Movies.Shared.csproj" />
   </ItemGroup>
 

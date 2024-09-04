@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection.Metadata;
 
-namespace MovieCardsAPI.Models.Entities
+namespace Domain.Models.Entities
 {
     public class Actor
     {
@@ -10,7 +10,7 @@ namespace MovieCardsAPI.Models.Entities
         public string? Name { get; set; }
 
         // Navigation property for the many-to-many relationship with Movies property for the join table
-        public ICollection<MovieActor>? MovieActors { get; set; }= new List<MovieActor>();
-    
+        public ICollection<MovieActor>? MovieActors { get; set; } = new List<MovieActor>();
+
     }
 }
