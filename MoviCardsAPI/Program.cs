@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MovieCardsAPI.Data;
-using MovieCardsAPI.Models.Entities;
+using MovieCardsAPI.Extensions;
+
 
 public class Program
 {
@@ -8,36 +9,19 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddDbContext<MovieCardsContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("MoviCardsContext")));
-
         /* Add services to the container*/
+        builder.Services.ConfigureSql(builder.Configuration);
         builder.Services.AddControllers(configure => configure.ReturnHttpNotAcceptable=true).AddNewtonsoftJson();
-
-        /*   
-             builder.Services.AddScoped<>
-             builder.Services.AddSingleton<>
-             builder.Services.AddTransient<>
-        */
-
-        /*   builder.Services.AddAutoMapper<MovieCardsContext>();*/
-        /*    builder.Services.AddAutoMapper<MovieCardsContext>();*/
         
         builder.Services.AddAutoMapper(typeof(MapperProfile));
-        // Learn more about configuration Swagger/OpenAPI at https://aka.ms/aspnetcore/swachbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
 
-        builder.Services.AddCors(builder =>
-        {
-            builder.AddPolicy("AllowAll", p =>
-            p.AllowAnyOrigin()
-            .AllowAnyMethod().
-             AllowAnyHeader());
-         });
+        // From extensions folder 
+        builder.Services.ConfigureCors();
+        builder.Services.ConfigureOpenApi();
+
 
         var app = builder.Build();
-
+        // Configure the HTTP request pipline
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
