@@ -5,7 +5,9 @@ VisualStudioVersion = 17.10.34916.146
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieCardsAPI", "MoviCardsAPI\MovieCardsAPI.csproj", "{EB1446EA-6D1D-457E-BA3B-1AD9F46C08B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Movies.Shared", "Movies.Shared\Movies.Shared.csproj", "{7030C724-9598-4ACD-B182-F63F5C917B77}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Movies.Shared", "Movies.Shared\Movies.Shared.csproj", "{7030C724-9598-4ACD-B182-F63F5C917B77}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{64CB9E8B-6958-4F6F-80D4-01894DFDF371}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,6 +26,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EB1446EA-6D1D-457E-BA3B-1AD9F46C08B9} = {64CB9E8B-6958-4F6F-80D4-01894DFDF371}
+		{7030C724-9598-4ACD-B182-F63F5C917B77} = {64CB9E8B-6958-4F6F-80D4-01894DFDF371}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BDED4ED3-8013-436B-8692-2E8FC36335AC}

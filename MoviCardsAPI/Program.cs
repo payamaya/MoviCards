@@ -12,7 +12,7 @@ public class Program
             options.UseSqlServer(builder.Configuration.GetConnectionString("MoviCardsContext")));
 
         /* Add services to the container*/
-        builder.Services.AddControllers().AddNewtonsoftJson();
+        builder.Services.AddControllers(configure => configure.ReturnHttpNotAcceptable=true).AddNewtonsoftJson();
 
         /*   
              builder.Services.AddScoped<>
@@ -27,6 +27,14 @@ public class Program
         // Learn more about configuration Swagger/OpenAPI at https://aka.ms/aspnetcore/swachbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        builder.Services.AddCors(builder =>
+        {
+            builder.AddPolicy("AllowAll", p =>
+            p.AllowAnyOrigin()
+            .AllowAnyMethod().
+             AllowAnyHeader());
+         });
 
         var app = builder.Build();
 

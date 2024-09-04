@@ -34,13 +34,5 @@ namespace MovieCardsAPI.Models.Entities
                public Movie() { }
               #nullable enable*/
 
-
-        // Parameterless constructor with default values
-        /*  public Movie()
-          {
-           Title = string.Empty; // Or some other default value
-           Description = string.Empty; // Or some other default value
-           Director = new Director(); // Or some other default director or null if nullable
-          }*/
     }
 }

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MovieCardsAPI.Migrations
 {
     [DbContext(typeof(MovieCardsContext))]
-    [Migration("20240902094039_Detail")]
-    partial class Detail
+    [Migration("20240904130628_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,7 +40,7 @@ namespace MovieCardsAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("163f98c2-be1c-4ed5-a748-740b5a79025a"),
+                            Id = new Guid("ccdcb64c-3af2-42c0-b8c1-51cd680894d2"),
                             Name = "Actor One"
                         });
                 });
@@ -95,7 +95,7 @@ namespace MovieCardsAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("96a40028-35a7-42a9-a23f-6c9ab6a58789"),
+                            Id = new Guid("40dda7f9-47bb-4f75-ba0b-99a50275e218"),
                             ContactInformationId = new Guid("00000000-0000-0000-0000-000000000000"),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Director One"
@@ -109,6 +109,7 @@ namespace MovieCardsAPI.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -118,7 +119,7 @@ namespace MovieCardsAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("57286e34-bb36-431e-8b4a-4595785c426a"),
+                            Id = new Guid("1e8f9687-9323-4046-b952-6e2d0f07b59b"),
                             Name = "Genre One"
                         });
                 });
@@ -142,6 +143,7 @@ namespace MovieCardsAPI.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

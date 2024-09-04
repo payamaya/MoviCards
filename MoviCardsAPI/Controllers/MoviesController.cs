@@ -17,19 +17,23 @@ namespace MovieCardsAPI.Controllers
         public MoviesController(MovieCardsContext context, IMapper mapper)
         {
             _context = context;
-            /* _mapper = mapper;*/
-            this._mapper = mapper;
+            _mapper = mapper;
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
                 // GET: api/movies
          [HttpGet]
-         public async Task<ActionResult<IEnumerable<MovieDTO>>> GetMovies()
+         public async Task<ActionResult<IEnumerable<MovieDTO>>> GetMovies(bool includeMovies)
          {
-             IEnumerable<MovieDTO> movieDTOs = await _context.Movies.ProjectTo<MovieDTO>(_mapper.ConfigurationProvider).ToListAsync();
+            /* IEnumerable<MovieDTO> movieDTOs = await _context.Movies.ProjectTo<MovieDTO>(_mapper.ConfigurationProvider).ToListAsync();*/
+            var movieDTOs = includeMovies ? _mapper.Map<IEnumerable<MovieDTO>>(await _context.Movies.Include(m => m.MovieActors).ToListAsync())
+                  : _mapper.Map<IEnumerable<MovieDTO>>(await _context.Movies.ToListAsync());
 
-             return Ok(movieDTOs);
+            return Ok(movieDTOs);
          }
+
+
+
          [HttpGet("{title} Name = \"RouteByTitle\"")]
          public async Task<ActionResult<IEnumerable<MovieDetailsDTO>>> GetMoviesByTitle(string title)
                 {
