@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace MovieCardsAPI.Migrations
+namespace Movies.Infrastructure.Migrations
 {
     [DbContext(typeof(MovieCardsContext))]
-    [Migration("20240904130628_Init")]
-    partial class Init
+    [Migration("20240904145915_Test")]
+    partial class Test
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,7 +24,7 @@ namespace MovieCardsAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("MovieCardsAPI.Models.Entities.Actor", b =>
+            modelBuilder.Entity("Domain.Models.Entities.Actor", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -40,12 +40,12 @@ namespace MovieCardsAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("ccdcb64c-3af2-42c0-b8c1-51cd680894d2"),
+                            Id = new Guid("5a05ad12-c4e5-4f12-886a-b0726f47c8ac"),
                             Name = "Actor One"
                         });
                 });
 
-            modelBuilder.Entity("MovieCardsAPI.Models.Entities.ContactInformation", b =>
+            modelBuilder.Entity("Domain.Models.Entities.ContactInformation", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -71,7 +71,7 @@ namespace MovieCardsAPI.Migrations
                     b.ToTable("ContactInformations");
                 });
 
-            modelBuilder.Entity("MovieCardsAPI.Models.Entities.Director", b =>
+            modelBuilder.Entity("Domain.Models.Entities.Director", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -95,14 +95,14 @@ namespace MovieCardsAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("40dda7f9-47bb-4f75-ba0b-99a50275e218"),
+                            Id = new Guid("df329637-f369-413f-b30d-426171f08b3c"),
                             ContactInformationId = new Guid("00000000-0000-0000-0000-000000000000"),
                             DateOfBirth = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Director One"
                         });
                 });
 
-            modelBuilder.Entity("MovieCardsAPI.Models.Entities.Genre", b =>
+            modelBuilder.Entity("Domain.Models.Entities.Genre", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -119,12 +119,12 @@ namespace MovieCardsAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("1e8f9687-9323-4046-b952-6e2d0f07b59b"),
+                            Id = new Guid("e862c9e6-3fa0-4845-a32b-aa82431e0385"),
                             Name = "Genre One"
                         });
                 });
 
-            modelBuilder.Entity("MovieCardsAPI.Models.Entities.Movie", b =>
+            modelBuilder.Entity("Domain.Models.Entities.Movie", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -153,7 +153,7 @@ namespace MovieCardsAPI.Migrations
                     b.ToTable("Movies");
                 });
 
-            modelBuilder.Entity("MovieCardsAPI.Models.Entities.MovieActor", b =>
+            modelBuilder.Entity("Domain.Models.Entities.MovieActor", b =>
                 {
                     b.Property<Guid>("MovieId")
                         .HasColumnType("uniqueidentifier");
@@ -168,7 +168,7 @@ namespace MovieCardsAPI.Migrations
                     b.ToTable("MovieActor");
                 });
 
-            modelBuilder.Entity("MovieCardsAPI.Models.Entities.MovieGenre", b =>
+            modelBuilder.Entity("Domain.Models.Entities.MovieGenre", b =>
                 {
                     b.Property<Guid>("MovieId")
                         .HasColumnType("uniqueidentifier");
@@ -183,20 +183,20 @@ namespace MovieCardsAPI.Migrations
                     b.ToTable("MovieGenre");
                 });
 
-            modelBuilder.Entity("MovieCardsAPI.Models.Entities.ContactInformation", b =>
+            modelBuilder.Entity("Domain.Models.Entities.ContactInformation", b =>
                 {
-                    b.HasOne("MovieCardsAPI.Models.Entities.Director", "Director")
+                    b.HasOne("Domain.Models.Entities.Director", "Director")
                         .WithOne("ContactInformation")
-                        .HasForeignKey("MovieCardsAPI.Models.Entities.ContactInformation", "DirectorId")
+                        .HasForeignKey("Domain.Models.Entities.ContactInformation", "DirectorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Director");
                 });
 
-            modelBuilder.Entity("MovieCardsAPI.Models.Entities.Movie", b =>
+            modelBuilder.Entity("Domain.Models.Entities.Movie", b =>
                 {
-                    b.HasOne("MovieCardsAPI.Models.Entities.Director", "Director")
+                    b.HasOne("Domain.Models.Entities.Director", "Director")
                         .WithMany("Movies")
                         .HasForeignKey("DirectorId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -205,15 +205,15 @@ namespace MovieCardsAPI.Migrations
                     b.Navigation("Director");
                 });
 
-            modelBuilder.Entity("MovieCardsAPI.Models.Entities.MovieActor", b =>
+            modelBuilder.Entity("Domain.Models.Entities.MovieActor", b =>
                 {
-                    b.HasOne("MovieCardsAPI.Models.Entities.Actor", "Actor")
+                    b.HasOne("Domain.Models.Entities.Actor", "Actor")
                         .WithMany("MovieActors")
                         .HasForeignKey("ActorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MovieCardsAPI.Models.Entities.Movie", "Movie")
+                    b.HasOne("Domain.Models.Entities.Movie", "Movie")
                         .WithMany("MovieActors")
                         .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -224,15 +224,15 @@ namespace MovieCardsAPI.Migrations
                     b.Navigation("Movie");
                 });
 
-            modelBuilder.Entity("MovieCardsAPI.Models.Entities.MovieGenre", b =>
+            modelBuilder.Entity("Domain.Models.Entities.MovieGenre", b =>
                 {
-                    b.HasOne("MovieCardsAPI.Models.Entities.Genre", "Genre")
+                    b.HasOne("Domain.Models.Entities.Genre", "Genre")
                         .WithMany("MovieGenres")
                         .HasForeignKey("GenreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MovieCardsAPI.Models.Entities.Movie", "Movie")
+                    b.HasOne("Domain.Models.Entities.Movie", "Movie")
                         .WithMany("MovieGenres")
                         .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -243,12 +243,12 @@ namespace MovieCardsAPI.Migrations
                     b.Navigation("Movie");
                 });
 
-            modelBuilder.Entity("MovieCardsAPI.Models.Entities.Actor", b =>
+            modelBuilder.Entity("Domain.Models.Entities.Actor", b =>
                 {
                     b.Navigation("MovieActors");
                 });
 
-            modelBuilder.Entity("MovieCardsAPI.Models.Entities.Director", b =>
+            modelBuilder.Entity("Domain.Models.Entities.Director", b =>
                 {
                     b.Navigation("ContactInformation")
                         .IsRequired();
@@ -256,12 +256,12 @@ namespace MovieCardsAPI.Migrations
                     b.Navigation("Movies");
                 });
 
-            modelBuilder.Entity("MovieCardsAPI.Models.Entities.Genre", b =>
+            modelBuilder.Entity("Domain.Models.Entities.Genre", b =>
                 {
                     b.Navigation("MovieGenres");
                 });
 
-            modelBuilder.Entity("MovieCardsAPI.Models.Entities.Movie", b =>
+            modelBuilder.Entity("Domain.Models.Entities.Movie", b =>
                 {
                     b.Navigation("MovieActors");
 

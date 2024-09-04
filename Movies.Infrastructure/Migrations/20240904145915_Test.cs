@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace MovieCardsAPI.Migrations
+namespace Movies.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class Test : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -142,17 +142,17 @@ namespace MovieCardsAPI.Migrations
             migrationBuilder.InsertData(
                 table: "Actors",
                 columns: new[] { "Id", "Name" },
-                values: new object[] { new Guid("ccdcb64c-3af2-42c0-b8c1-51cd680894d2"), "Actor One" });
+                values: new object[] { new Guid("5a05ad12-c4e5-4f12-886a-b0726f47c8ac"), "Actor One" });
 
             migrationBuilder.InsertData(
                 table: "Directors",
                 columns: new[] { "Id", "ContactInformationId", "DateOfBirth", "Name" },
-                values: new object[] { new Guid("40dda7f9-47bb-4f75-ba0b-99a50275e218"), new Guid("00000000-0000-0000-0000-000000000000"), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Director One" });
+                values: new object[] { new Guid("df329637-f369-413f-b30d-426171f08b3c"), new Guid("00000000-0000-0000-0000-000000000000"), new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Director One" });
 
             migrationBuilder.InsertData(
                 table: "Genres",
                 columns: new[] { "Id", "Name" },
-                values: new object[] { new Guid("1e8f9687-9323-4046-b952-6e2d0f07b59b"), "Genre One" });
+                values: new object[] { new Guid("e862c9e6-3fa0-4845-a32b-aa82431e0385"), "Genre One" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ContactInformations_DirectorId",
