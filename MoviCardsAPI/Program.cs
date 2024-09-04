@@ -11,7 +11,9 @@ public class Program
 
         /* Add services to the container*/
         builder.Services.ConfigureSql(builder.Configuration);
-        builder.Services.AddControllers(configure => configure.ReturnHttpNotAcceptable=true).AddNewtonsoftJson();
+        builder.Services.AddControllers(configure => configure.ReturnHttpNotAcceptable=true)
+          /*  .AddXmlDataContractSerializerFormatters()*/
+            .AddNewtonsoftJson();
         
         builder.Services.AddAutoMapper(typeof(MapperProfile));
 
