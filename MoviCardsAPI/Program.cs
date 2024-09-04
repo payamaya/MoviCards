@@ -1,6 +1,5 @@
-using Microsoft.EntityFrameworkCore;
-using MovieCardsAPI.Data;
 using MovieCardsAPI.Extensions;
+using Movies.Infrastructure.Data;
 
 
 public class Program

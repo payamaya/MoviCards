@@ -1,7 +1,10 @@
 ﻿using Bogus;
+using Domain.Models.Entities;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace MovieCardsAPI.Data
+namespace Movies.Infrastructure.Data
 {
     public static class SeedData
     {
@@ -120,4 +123,3 @@ namespace MovieCardsAPI.Data
 
     }
 }
-  

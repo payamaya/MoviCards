@@ -21,13 +21,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Configurations\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Domain.Models\Domain.Models.csproj" />
-    <ProjectReference Include="..\Movies.Shared\Movies.Shared.csproj" />
+    <ProjectReference Include="..\Movies.Infrastructure\Movies.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
