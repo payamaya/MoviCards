@@ -21,7 +21,7 @@ public class Program
         builder.Services.ConfigureCors();
         builder.Services.ConfigureOpenApi();
         // Repository folder
-        builder.Services.AddScoped<IMovieRepository, MovieRepository>();
+        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
         var app = builder.Build();

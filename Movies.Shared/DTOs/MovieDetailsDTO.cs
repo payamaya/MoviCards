@@ -13,6 +13,7 @@ namespace Movies.Shared.DTOs
         public List<string> GenreNames { get; set; }
         public string? DirectorContactEmail { get; set; }
         public string? DirectorContactPhone { get; set; }
+    
 
         public MovieDetailsDTO() { }
 

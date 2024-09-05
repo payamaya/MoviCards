@@ -11,17 +11,20 @@ namespace MovieCardsAPI.Controllers
     /* Swagger [Produces("application/json")] */
     public class MoviesController : ControllerBase
     {
-        private readonly MovieCardsContext _context;
+        //private readonly MovieCardsContext _context;
         /* private object mapper;*/
         private readonly IMapper _mapper;
-        private readonly IMovieRepository _movieRepository;
+        private readonly IUnitOfWork _uow;
+        //private readonly IMovieRepository MovieRepository;
 
-        public MoviesController(MovieCardsContext context, IMapper mapper, IMovieRepository movieRepository)
+        public MoviesController(//MovieCardsContext context, 
+            IMapper mapper, IUnitOfWork uow)
         {
-            _context = context;
+            //_context = context;
             _mapper = mapper;
-            _movieRepository = movieRepository;
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _uow = uow;
+            // _movieRepository = movieRepository;
+           /* _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));*/
         }
 
                 // GET: api/movies
@@ -31,8 +34,8 @@ namespace MovieCardsAPI.Controllers
             /* IEnumerable<MovieDTO> movieDTOs = await _context.Movies.ProjectTo<MovieDTO>(_mapper.ConfigurationProvider).ToListAsync();*/
             /*       var movieDTOs = includeMovies ? _mapper.Map<IEnumerable<MovieDTO>>(await _context.Movies.Include(m => m.MovieActors).ToListAsync())
                                                  : _mapper.Map<IEnumerable<MovieDTO>>(await _context.Movies.ToListAsync());*/
-            var movieDTOs = includeMovies ? _mapper.Map<IEnumerable<MovieDTO>>(await _movieRepository.GetMoviesAsync(trackChanges: false, includeMovies: true))
-                                          : _mapper.Map<IEnumerable<MovieDTO>>(await _movieRepository.GetMoviesAsync(trackChanges: false));
+            var movieDTOs = includeMovies ? _mapper.Map<IEnumerable<MovieDTO>>(await _uow.MovieRepository.GetMoviesAsync(trackChanges: false, includeMovies: true))
+                                          : _mapper.Map<IEnumerable<MovieDTO>>(await _uow.MovieRepository.GetMoviesAsync(trackChanges: false));
             return Ok(movieDTOs);
          }
 
@@ -41,13 +44,16 @@ namespace MovieCardsAPI.Controllers
         [HttpGet("{title} Name = \"RouteByTitle\"")]
          public async Task<ActionResult<IEnumerable<MovieDetailsDTO>>> GetMoviesByTitle(string title)
                 {
-                    var moviesByTitle = await _context.Movies.ProjectTo<MovieDetailsDTO>(_mapper.ConfigurationProvider).ToListAsync();
+                  /*  var moviesByTitle = await _context.Movies.ProjectTo<MovieDetailsDTO>(_mapper.ConfigurationProvider).ToListAsync();
 
                     if (!string.IsNullOrWhiteSpace(title))
                     {
                         moviesByTitle = moviesByTitle.Where(m => m.Title.Contains(title, StringComparison.OrdinalIgnoreCase)).ToList();
-                    }
-
+                    }*/
+                  var movies= await _uow.MovieRepository.GetMoviesAsync(trackChanges: false);
+             var moviesByTitle =  _mapper.Map<IEnumerable<MovieDetailsDTO>>(movies)
+                 .Where(m => m.Title.Contains( title, StringComparison.OrdinalIgnoreCase))
+                 .ToList();
                     return Ok(moviesByTitle);
 
                 }   
@@ -61,13 +67,22 @@ namespace MovieCardsAPI.Controllers
                             return BadRequest("Genre cannot be empty.");
                         }
 
-                        // Filter the movies by genre before projecting to DTO
-                        var moviesByGenre = await _context.Movies
-                            .Where(m => m.MovieGenres.Any(mg => mg.Genre.Name.ToLower() == genre.ToLower()))
-                            .ProjectTo<MovieDetailsDTO>(_mapper.ConfigurationProvider)
-                            .ToListAsync();
+                // Filter the movies by genre before projecting to DTO
+                /* var moviesByGenre = await _context.Movies
+                     .Where(m => m.MovieGenres.Any(mg => mg.Genre.Name.ToLower() == genre.ToLower()))
+                     .ProjectTo<MovieDetailsDTO>(_mapper.ConfigurationProvider)
+                     .ToListAsync();*/
+                var moviesByGenre = await _uow.MovieRepository.GetMoviesByGenreAsync(genre);
+               
+                                      
+                if(!moviesByGenre.Any())
+                {
+                    return NotFound("No movies found for that : {genre}");
+                }
+                var movieDetailsDTOs = _mapper.Map<IEnumerable<MovieDetailsDTO>>(moviesByGenre);
 
-                        return Ok(moviesByGenre);
+                return Ok(moviesByGenre);
+
                     }
                     catch (Exception ex)
                     {
@@ -101,7 +116,9 @@ namespace MovieCardsAPI.Controllers
                     : new[] { "title" };
                 var isDescending = sortOrder?.ToLower() == "desc";
                 //Fetch all movies
-                var query = _context.Movies.AsQueryable();
+                // var query = _context.Movies.AsQueryable();  
+                var query = await _uow.MovieRepository.GetMoviesAsync(trackChanges: false);
+
 
                 //Appply flters based on the provided parameters
                 if (id.HasValue)
@@ -165,10 +182,13 @@ namespace MovieCardsAPI.Controllers
                        }
                    }
                 }
-                
-                var movies = await query.ProjectTo<MovieDetailsDTO>(_mapper.ConfigurationProvider).ToListAsync();
 
-            return Ok(movies);
+                /*var movies = await query.ProjectTo<MovieDetailsDTO>(_mapper.ConfigurationProvider).ToListAsync();
+
+            return Ok(movies);*/
+                var moviesDetailsDTO = _mapper.Map<IEnumerable<MovieDetailsDTO>>(query); 
+
+            return Ok(moviesDetailsDTO);
             }
             catch (Exception ex)
             {
@@ -183,12 +203,12 @@ namespace MovieCardsAPI.Controllers
         {
             if (id != dto.Id) return BadRequest("Invalid movie ID or data.");
 
-            var movieFromDB = await _movieRepository.GetMovieAsync(id);
+            var movieFromDB = await _uow.MovieRepository.GetMovieAsync(id);
 
             if ((movieFromDB is null)) return NotFound($"Movie with ID {id} not found.");
 
             _mapper.Map(dto, movieFromDB);
-            await _context.SaveChangesAsync();
+            await _uow.CompleteAsync();
 
 
             /*return NoContent();*/
@@ -210,25 +230,32 @@ namespace MovieCardsAPI.Controllers
              }
              
              */
-             // Ensure that all referenced IDs are valid
-    if (!await _context.Directors.AnyAsync(d => d.Id == dto.DirectorId) ||
-        !await _context.Actors.AnyAsync(a => dto.ActorIds.Contains(a.Id)) ||
-        !await _context.Genres.AnyAsync(g => dto.GenreIds.Contains(g.Id)))
-    {
+            // Ensure that all referenced IDs are valid
+            /*    if (!await _context.Directors.AnyAsync(d => d.Id == dto.DirectorId) ||
+                    !await _context.Actors.AnyAsync(a => dto.ActorIds.Contains(a.Id)) ||
+                    !await _context.Genres.AnyAsync(g => dto.GenreIds.Contains(g.Id))) */
+            // Ensure that all referenced IDs are valid
+            if (!await _uow.MovieRepository.DirectorExistsAsync(dto.DirectorId) ||
+                !await _uow.MovieRepository.ActorsExistAsync(dto.ActorIds) ||
+                !await _uow.MovieRepository.GenresExistAsync(dto.GenreIds))
+            {
         return BadRequest("Invalid IDs provided.");
     }
 
             // Map from MovieCreateDTO to Movie entity
             var movie = _mapper.Map<Movie>(dto);
 
-           /* _context.Movies.Add(movie);*/
-           await _movieRepository.CreateAsync(movie);
-            await _context.SaveChangesAsync();
+
+            /* _context.Movies.Add(movie);*/
+            // Create the movie using the repository
+            await _uow.MovieRepository.CreateAsync(movie);
+            // Save changes via Unit of Work
+            await _uow.CompleteAsync();
 
             // Map the saved Movie entity to MovieDTO for the response
             var movieDTO = _mapper.Map<MovieDTO>(movie);
 
-            return CreatedAtAction(nameof(Queryable), new { id = movieDTO.Id }, movieDTO);
+            return CreatedAtAction(nameof(GetMovies), new { id = movieDTO.Id }, movieDTO);
         }
         // DELETE: api/movies/{id}
         [HttpDelete("{id:guid}")]
@@ -238,14 +265,14 @@ namespace MovieCardsAPI.Controllers
         */
         public async Task<IActionResult> DeleteMovie(Guid id)
         {
-            var movie = await _movieRepository.GetMovieAsync(id);
+            var movie = await _uow.MovieRepository.GetMovieAsync(id);
 
             if (movie == null)   return NotFound();
             
 
            /* _context.Movies.Remove(movie);*/
-            _movieRepository.Delete(movie);
-            await _context.SaveChangesAsync();
+            _uow.MovieRepository.Delete(movie);
+            await _uow.CompleteAsync();
 
             return NoContent();
         }
@@ -253,15 +280,18 @@ namespace MovieCardsAPI.Controllers
                 [HttpPatch("{id:guid")]
                 public async Task<ActionResult> PtachMovies(Guid id)*/
 
-        private bool MovieExists(Guid id) => _context.Movies.Any(m => m.Id == id);
+      
 
         [HttpGet("{id:guid}/details")]
         public async Task<ActionResult<MovieDetailsDTO>> GetMovieDetails(Guid id)
         {
-            var dto = await _mapper.ProjectTo<MovieDetailsDTO>(_context.Movies.Where(m => m.Id != id)).FirstOrDefaultAsync();
-            if (dto == null) return NotFound();
+            /*  var dto = await _mapper.ProjectTo<MovieDetailsDTO>(_context.Movies.Where(m => m.Id != id)).FirstOrDefaultAsync();*/
+            var movie = await _uow.MovieRepository.GetMovieAsync(id);
 
-            return Ok(dto);
+            if (movie == null) return NotFound();
+            var movieDTO = _mapper.Map<MovieDetailsDTO>(movie);
+
+            return Ok(movieDTO);
         }
     }
 }
