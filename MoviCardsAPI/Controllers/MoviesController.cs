@@ -1,5 +1,6 @@
 ﻿using AutoMapper.QueryableExtensions;
 using MovieCardsAPI.Validations;
+using Movies.Infrastructure.Repository;
 
 namespace MovieCardsAPI.Controllers
 {
@@ -12,12 +13,13 @@ namespace MovieCardsAPI.Controllers
         private readonly MovieCardsContext _context;
         /* private object mapper;*/
         private readonly IMapper _mapper;
+        private readonly IMovieRepository _movieRepository;
 
-
-        public MoviesController(MovieCardsContext context, IMapper mapper)
+        public MoviesController(MovieCardsContext context, IMapper mapper, IMovieRepository movieRepository)
         {
             _context = context;
             _mapper = mapper;
+            _movieRepository = movieRepository;
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
@@ -26,15 +28,16 @@ namespace MovieCardsAPI.Controllers
          public async Task<ActionResult<IEnumerable<MovieDTO>>> GetMovies(bool includeMovies)
          {
             /* IEnumerable<MovieDTO> movieDTOs = await _context.Movies.ProjectTo<MovieDTO>(_mapper.ConfigurationProvider).ToListAsync();*/
-            var movieDTOs = includeMovies ? _mapper.Map<IEnumerable<MovieDTO>>(await _context.Movies.Include(m => m.MovieActors).ToListAsync())
-                  : _mapper.Map<IEnumerable<MovieDTO>>(await _context.Movies.ToListAsync());
-
+            /*       var movieDTOs = includeMovies ? _mapper.Map<IEnumerable<MovieDTO>>(await _context.Movies.Include(m => m.MovieActors).ToListAsync())
+                                                 : _mapper.Map<IEnumerable<MovieDTO>>(await _context.Movies.ToListAsync());*/
+            var movieDTOs = includeMovies ? _mapper.Map<IEnumerable<MovieDTO>>(await GetMoviesAsync(true))
+                                          : _mapper.Map<IEnumerable<MovieDTO>>(await GetMoviesAsync());
             return Ok(movieDTOs);
          }
 
+   
 
-
-         [HttpGet("{title} Name = \"RouteByTitle\"")]
+        [HttpGet("{title} Name = \"RouteByTitle\"")]
          public async Task<ActionResult<IEnumerable<MovieDetailsDTO>>> GetMoviesByTitle(string title)
                 {
                     var moviesByTitle = await _context.Movies.ProjectTo<MovieDetailsDTO>(_mapper.ConfigurationProvider).ToListAsync();
@@ -173,58 +176,13 @@ namespace MovieCardsAPI.Controllers
             }
         }
 
-      /*  // GET: api/movies/{id}
-        [HttpGet("{id:guid} Name = \"RouteNameForGetOne\"")]
-
-        *//* SWAGGER 
-                 [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StudentDetailsDto))]
-                [ProducesResponseType(StatusCodes.Status404NotFound)]
-
-                [SwaggerOperation(Summary = "Get a student by id", Description = "Get a student by id", OperationId = "GetStudentById")]
-                [SwaggerResponse(StatusCodes.Status200OK, "The student was found", Type = typeof(StudentDetailsDto))]
-                [SwaggerResponse(StatusCodes.Status404NotFound, "The student was not found")]
-         *//*
-        public async Task<ActionResult<MovieDetailsDTO>> GetMovieById(Guid id)
-        {
-    
-            var dto = await _mapper.ProjectTo<MovieDetailsDTO>(_context.Movies.Where(m => m.Id == id)).FirstOrDefaultAsync();
-
-            *//*
-             * This works as well
-             * var dto2 = await _context.Movies
-                  .Where(m => m.Id == id)
-                  .ProjectTo<MovieDetailsDTO>(_mapper.ConfigurationProvider)
-                  .FirstOrDefaultAsync();
-            *//*
-
-            if (dto == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(dto);
-        }*/
-
-        // GET: api/movies/{id}/details
-        [HttpGet("{id:guid}/details")]
-        public async Task<ActionResult<MovieDetailsDTO>> GetMovieDetails(Guid id)
-        {
-          var dto = await _mapper.ProjectTo<MovieDetailsDTO>(_context.Movies.Where(m => m.Id != id)).FirstOrDefaultAsync(); 
-            if (dto == null) return NotFound();
-
-            return Ok(dto);
-        }
-
-
-
-
         // PUT: api/movies/{id}
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateMovie(Guid id, MovieUpdateDTO dto)
         {
             if (id != dto.Id) return BadRequest("Invalid movie ID or data.");
 
-            var movieFromDB = await _context.Movies.Include(m => m.Director).FirstOrDefaultAsync(m => m.Id == id);
+            var movieFromDB = await _context.Movies.Include(m => m.Director).FirstOrDefaultAsync(m => m.Id.Equals(id));
 
             if ((movieFromDB is null)) return NotFound($"Movie with ID {id} not found.");
 
@@ -279,10 +237,9 @@ namespace MovieCardsAPI.Controllers
         public async Task<IActionResult> DeleteMovie(Guid id)
         {
             var movie = await _context.Movies.FindAsync(id);
-            if (movie == null)
-            {
-                return NotFound();
-            }
+
+            if (movie == null)   return NotFound();
+            
 
             _context.Movies.Remove(movie);
             await _context.SaveChangesAsync();
@@ -294,5 +251,14 @@ namespace MovieCardsAPI.Controllers
                 public async Task<ActionResult> PtachMovies(Guid id)*/
 
         private bool MovieExists(Guid id) => _context.Movies.Any(m => m.Id == id);
+
+        [HttpGet("{id:guid}/details")]
+        public async Task<ActionResult<MovieDetailsDTO>> GetMovieDetails(Guid id)
+        {
+            var dto = await _mapper.ProjectTo<MovieDetailsDTO>(_context.Movies.Where(m => m.Id != id)).FirstOrDefaultAsync();
+            if (dto == null) return NotFound();
+
+            return Ok(dto);
+        }
     }
 }

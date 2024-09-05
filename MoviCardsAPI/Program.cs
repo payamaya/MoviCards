@@ -1,5 +1,6 @@
 using MovieCardsAPI.Extensions;
 using Movies.Infrastructure.Data;
+using Movies.Infrastructure.Repository;
 
 
 public class Program
@@ -15,10 +16,11 @@ public class Program
             .AddNewtonsoftJson();
         
         builder.Services.AddAutoMapper(typeof(MapperProfile));
-
         // From extensions folder 
         builder.Services.ConfigureCors();
         builder.Services.ConfigureOpenApi();
+        // Repository folder
+        builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 
 
         var app = builder.Build();
