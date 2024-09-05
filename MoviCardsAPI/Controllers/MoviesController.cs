@@ -31,8 +31,8 @@ namespace MovieCardsAPI.Controllers
             /* IEnumerable<MovieDTO> movieDTOs = await _context.Movies.ProjectTo<MovieDTO>(_mapper.ConfigurationProvider).ToListAsync();*/
             /*       var movieDTOs = includeMovies ? _mapper.Map<IEnumerable<MovieDTO>>(await _context.Movies.Include(m => m.MovieActors).ToListAsync())
                                                  : _mapper.Map<IEnumerable<MovieDTO>>(await _context.Movies.ToListAsync());*/
-            var movieDTOs = includeMovies ? _mapper.Map<IEnumerable<MovieDTO>>(await _movieRepository.GetMoviesAsync(true))
-                                          : _mapper.Map<IEnumerable<MovieDTO>>(await _movieRepository.GetMoviesAsync());
+            var movieDTOs = includeMovies ? _mapper.Map<IEnumerable<MovieDTO>>(await _movieRepository.GetMoviesAsync(trackChanges: false, includeMovies: true))
+                                          : _mapper.Map<IEnumerable<MovieDTO>>(await _movieRepository.GetMoviesAsync(trackChanges: false));
             return Ok(movieDTOs);
          }
 
@@ -183,7 +183,7 @@ namespace MovieCardsAPI.Controllers
         {
             if (id != dto.Id) return BadRequest("Invalid movie ID or data.");
 
-            var movieFromDB = await _context.Movies.Include(m => m.Director).FirstOrDefaultAsync(m => m.Id.Equals(id));
+            var movieFromDB = await _movieRepository.GetMovieAsync(id);
 
             if ((movieFromDB is null)) return NotFound($"Movie with ID {id} not found.");
 
@@ -221,7 +221,8 @@ namespace MovieCardsAPI.Controllers
             // Map from MovieCreateDTO to Movie entity
             var movie = _mapper.Map<Movie>(dto);
 
-            _context.Movies.Add(movie);
+           /* _context.Movies.Add(movie);*/
+           await _movieRepository.CreateAsync(movie);
             await _context.SaveChangesAsync();
 
             // Map the saved Movie entity to MovieDTO for the response
@@ -242,7 +243,8 @@ namespace MovieCardsAPI.Controllers
             if (movie == null)   return NotFound();
             
 
-            _context.Movies.Remove(movie);
+           /* _context.Movies.Remove(movie);*/
+            _movieRepository.Delete(movie);
             await _context.SaveChangesAsync();
 
             return NoContent();
