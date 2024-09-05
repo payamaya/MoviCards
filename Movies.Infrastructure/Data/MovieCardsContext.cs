@@ -3,7 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 public class MovieCardsContext : DbContext
 {
-    public DbSet<Movie> Movies { get; set; }
+    /*   public DbSet<Movie> Movies { get; set; }*/
+    // Type parameter can be generic
+    public DbSet<Movie> Movies => Set<Movie>();
+
     public DbSet<Director> Directors { get; set; }
     public DbSet<Actor> Actors { get; set; }
     public DbSet<Genre> Genres { get; set; }

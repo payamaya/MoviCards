@@ -203,16 +203,16 @@ namespace MovieCardsAPI.Controllers
         {
             if (id != dto.Id) return BadRequest("Invalid movie ID or data.");
 
-            var movieFromDB = await _uow.MovieRepository.GetMovieAsync(id);
+            var existingMovie = await _uow.MovieRepository.GetMovieAsync(id);
 
-            if ((movieFromDB is null)) return NotFound($"Movie with ID {id} not found.");
+            if ((existingMovie is null)) return NotFound($"Movie with ID {id} not found.");
 
-            _mapper.Map(dto, movieFromDB);
+            _mapper.Map(dto, existingMovie);
             await _uow.CompleteAsync();
 
 
             /*return NoContent();*/
-            return Ok(_mapper.Map<MovieDTO>(movieFromDB));// For demo!
+            return Ok(_mapper.Map<MovieDTO>(existingMovie));// For demo!
         }
 
 
