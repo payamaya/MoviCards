@@ -1,6 +1,6 @@
 ﻿using Domain.Models.Entities;
 
-namespace Movies.Infrastructure.Repository
+namespace Domain.Contracts
 {
     public interface IMovieRepository
     {

@@ -1,3 +1,4 @@
+using Domain.Contracts;
 using MovieCardsAPI.Extensions;
 using Movies.Infrastructure.Data;
 using Movies.Infrastructure.Repository;

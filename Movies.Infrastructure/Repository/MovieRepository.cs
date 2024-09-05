@@ -1,4 +1,5 @@
-﻿using Domain.Models.Entities;
+﻿using Domain.Contracts;
+using Domain.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 

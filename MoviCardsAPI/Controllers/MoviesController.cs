@@ -1,4 +1,5 @@
 ﻿using AutoMapper.QueryableExtensions;
+using Domain.Contracts;
 using MovieCardsAPI.Validations;
 using Movies.Infrastructure.Repository;
 
