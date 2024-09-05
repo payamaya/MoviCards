@@ -30,8 +30,8 @@ namespace MovieCardsAPI.Controllers
             /* IEnumerable<MovieDTO> movieDTOs = await _context.Movies.ProjectTo<MovieDTO>(_mapper.ConfigurationProvider).ToListAsync();*/
             /*       var movieDTOs = includeMovies ? _mapper.Map<IEnumerable<MovieDTO>>(await _context.Movies.Include(m => m.MovieActors).ToListAsync())
                                                  : _mapper.Map<IEnumerable<MovieDTO>>(await _context.Movies.ToListAsync());*/
-            var movieDTOs = includeMovies ? _mapper.Map<IEnumerable<MovieDTO>>(await GetMoviesAsync(true))
-                                          : _mapper.Map<IEnumerable<MovieDTO>>(await GetMoviesAsync());
+            var movieDTOs = includeMovies ? _mapper.Map<IEnumerable<MovieDTO>>(await _movieRepository.GetMoviesAsync(true))
+                                          : _mapper.Map<IEnumerable<MovieDTO>>(await _movieRepository.GetMoviesAsync());
             return Ok(movieDTOs);
          }
 
@@ -236,7 +236,7 @@ namespace MovieCardsAPI.Controllers
         */
         public async Task<IActionResult> DeleteMovie(Guid id)
         {
-            var movie = await _context.Movies.FindAsync(id);
+            var movie = await _movieRepository.GetMovieAsync(id);
 
             if (movie == null)   return NotFound();
             
