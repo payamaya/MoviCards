@@ -2,75 +2,91 @@
 using Domain.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace Movies.Infrastructure.Repository
 {
-    public class MovieRepository : IMovieRepository
+    public class MovieRepository: RepositoryBase<Movie> ,IMovieRepository
     {
-        private readonly MovieCardsContext _context;
 
-        public MovieRepository(MovieCardsContext context)
+        public MovieRepository(MovieCardsContext context): base(context) { }
+
+        public Task<bool> ActorsExistAsync(List<Guid> actorIds)
         {
-            _context = context;
-
+            throw new NotImplementedException();
         }
 
-
-        public async Task<Movie?> GetMovieAsync(Guid id)
+        public Task<bool> DirectorExistsAsync(Guid directorId)
         {
-            return await _context.Movies.FirstOrDefaultAsync(m => m.Id == id);
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> GenresExistAsync(List<Guid> genreIds)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<Movie?> GetMovieAsync(Guid id, bool trackChanges)
+        {
+            return await FindByCondition(m => m.Id.Equals(id),trackChanges)
+                .FirstOrDefaultAsync();
+                          
         }
 
         public async Task<IEnumerable<Movie>> GetMoviesAsync(bool trackChanges, bool includeMovies = false)
         {
-            return includeMovies ? await _context.Movies.Include(m => m.MovieActors).ToListAsync()
-                                 : await _context.Movies.ToListAsync();
+            return includeMovies ? await FindAll(trackChanges).Include(m => m.MovieActors).ToListAsync()
+                                 : await FindAll(trackChanges).ToListAsync();
         }
 
-        public async Task CreateAsync(Movie movie)
+        public Task<IEnumerable<Movie>> GetMoviesByGenreAsync(string genre)
         {
-            await _context.AddAsync(movie);
+            throw new NotImplementedException();
         }
 
-        public void Delete(Movie movie)
-        {
-           _context.Remove(movie);
-        }
 
-        public void Update(Movie movie)
-        {
-            _context.Update(movie);
-        }
+        /*      // Check if the Director exists
+              public async Task<bool> DirectorExistsAsync(Guid directorId)
+              {
+                  return await _context.Directors.AnyAsync(d => d.Id == directorId);
+              }
 
-        // Check if the Director exists
-        public async Task<bool> DirectorExistsAsync(Guid directorId)
-        {
-            return await _context.Directors.AnyAsync(d => d.Id == directorId);
-        }
+              // Check if all Actors exist
+              public async Task<bool> ActorsExistAsync(List<Guid> actorIds)
+              {
+                  var count = await _context.Actors.CountAsync(a => actorIds.Contains(a.Id));
+                  return count == actorIds.Count;  // Check if the count matches the number of actor IDs
+              }
 
-        // Check if all Actors exist
-        public async Task<bool> ActorsExistAsync(List<Guid> actorIds)
-        {
-            var count = await _context.Actors.CountAsync(a => actorIds.Contains(a.Id));
-            return count == actorIds.Count;  // Check if the count matches the number of actor IDs
-        }
+              // Check if all Genres exist
+              public async Task<bool> GenresExistAsync(List<Guid> genreIds)
+              {
+                  var count = await _context.Genres.CountAsync(g => genreIds.Contains(g.Id));
+                  return count == genreIds.Count;  // Check if the count matches the number of genre IDs
+              }
+              public async Task<bool> MovieExists(Guid id) 
+              {
+                  return await _context.Movies.AnyAsync(m => m.Id == id);
+              }
+              public async Task<IEnumerable<Movie>> GetMoviesByGenreAsync(string genre)
+              {
+                  return await _context.Movies
+                      .Where(m => m.MovieGenres.Any(mg => mg.Genre.Name.ToLower() == genre.ToLower()))
+                      .ToListAsync();
+              }*/
+        /*  Implemented in base class
+         *  public async Task CreateAsync(Movie movie)
+   {
+       await _context.AddAsync(movie);
+   }
 
-        // Check if all Genres exist
-        public async Task<bool> GenresExistAsync(List<Guid> genreIds)
-        {
-            var count = await _context.Genres.CountAsync(g => genreIds.Contains(g.Id));
-            return count == genreIds.Count;  // Check if the count matches the number of genre IDs
-        }
-        public async Task<bool> MovieExists(Guid id) 
-        {
-            return await _context.Movies.AnyAsync(m => m.Id == id);
-        }
-        public async Task<IEnumerable<Movie>> GetMoviesByGenreAsync(string genre)
-        {
-            return await _context.Movies
-                .Where(m => m.MovieGenres.Any(mg => mg.Genre.Name.ToLower() == genre.ToLower()))
-                .ToListAsync();
-        }
+   public void Delete(Movie movie)
+   {
+      _context.Remove(movie);
+   }
+
+   public void Update(Movie movie)
+   {
+       _context.Update(movie);
+   }*/
 
     }
 }

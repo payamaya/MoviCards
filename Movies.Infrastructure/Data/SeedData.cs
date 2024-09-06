@@ -65,10 +65,18 @@ namespace Movies.Infrastructure.Data
             var faker = new Faker<Actor>("sv").Rules((f, a) =>
             {
                 a.Name = f.Person.FullName;
+                // Generate ContactInformation for each actor
+                a.ContactInformation = new ContactInformation
+                {
+                    PhoneNumber = f.Phone.PhoneNumber(),
+                    Email = f.Internet.Email()
+                };
+                a.ContactInformationId = a.ContactInformation.Id; // Set ContactInformationId
             });
 
             return faker.Generate(count);
         }
+
 
         private static IEnumerable<Genre> GenerateGenres(int count)
         {
@@ -109,6 +117,8 @@ namespace Movies.Infrastructure.Data
 
             return faker.Generate(2); // Generate 2 actors per movie
         }
+   
+
 
         private static IEnumerable<MovieGenre> GenerateMovieGenres(List<Genre> genres, Guid movieId)
         {

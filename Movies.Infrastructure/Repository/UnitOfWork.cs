@@ -11,13 +11,17 @@ namespace Movies.Infrastructure.Repository
     public class UnitOfWork : IUnitOfWork
     {
         private readonly MovieCardsContext _context;
+        private readonly Lazy<IMovieRepository> _movieRepository;
+        private readonly Lazy<IActorRepository> _actorRepository;
 
-        public IMovieRepository MovieRepository { get; }
+        public IMovieRepository Movie => _movieRepository.Value;
+        public IActorRepository Actor => _actorRepository.Value;
 
         public UnitOfWork(MovieCardsContext context)
         {
-            MovieRepository = new MovieRepository(context);
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _movieRepository = new Lazy<IMovieRepository>(()=> new MovieRepository(context));
+            _actorRepository= new Lazy<IActorRepository>(()=> new ActorRepository(context));
         }
         public async Task CompleteAsync()
         {

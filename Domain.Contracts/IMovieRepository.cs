@@ -4,7 +4,7 @@ namespace Domain.Contracts
 {
     public interface IMovieRepository
     {
-        Task<Movie?> GetMovieAsync(Guid id);
+        Task<Movie?> GetMovieAsync(Guid id, bool trackChanges);
         Task<IEnumerable<Movie>> GetMoviesAsync(bool trackChanges = false, bool includeMovies = false);
         Task<IEnumerable<Movie>> GetMoviesByGenreAsync(string genre);
 

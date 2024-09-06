@@ -2,7 +2,9 @@
 {
     public interface IUnitOfWork
     {
-        IMovieRepository MovieRepository { get; }
+        IMovieRepository Movie { get; }
+
+        IActorRepository Actor { get; }
 
         Task CompleteAsync();
     }
