@@ -2,6 +2,7 @@
 using Domain.Contracts;
 using MovieCardsAPI.Validations;
 using Movies.Infrastructure.Repository;
+using Service;
 
 namespace MovieCardsAPI.Controllers
 {
@@ -11,20 +12,25 @@ namespace MovieCardsAPI.Controllers
     /* Swagger [Produces("application/json")] */
     public class MoviesController : ControllerBase
     {
+        private readonly IServiceManager _serviceManger;
+
         //private readonly MovieCardsContext _context;
         /* private object mapper;*/
-        private readonly IMapper _mapper;
-        private readonly IUnitOfWork _uow;
+        /*    private readonly IMapper _mapper;
+            private readonly IUnitOfWork _uow;*/
         //private readonly IMovieRepository MovieRepository;
 
         public MoviesController(//MovieCardsContext context, 
-            IMapper mapper, IUnitOfWork uow)
+           // IMapper mapper, IUnitOfWork uow
+           IServiceManager serviceManger
+            )
         {
+            _serviceManger = serviceManger;
             //_context = context;
-            _mapper = mapper;
-            _uow = uow;
+            /*   _mapper = mapper;
+               _uow = uow;*/
             // _movieRepository = movieRepository;
-           /* _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));*/
+            /* _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));*/
         }
 
                 // GET: api/movies
@@ -34,22 +40,23 @@ namespace MovieCardsAPI.Controllers
             /* IEnumerable<MovieDTO> movieDTOs = await _context.Movies.ProjectTo<MovieDTO>(_mapper.ConfigurationProvider).ToListAsync();*/
             /*       var movieDTOs = includeMovies ? _mapper.Map<IEnumerable<MovieDTO>>(await _context.Movies.Include(m => m.MovieActors).ToListAsync())
                                                  : _mapper.Map<IEnumerable<MovieDTO>>(await _context.Movies.ToListAsync());*/
-            var movieDTOs = includeMovies ? _mapper.Map<IEnumerable<MovieDTO>>(await _uow.Movie.GetMoviesAsync(trackChanges: false, includeMovies: true))
-                                          : _mapper.Map<IEnumerable<MovieDTO>>(await _uow.Movie.GetMoviesAsync(trackChanges: false));
+
+            var movieDTOs = await _serviceManger.MovieService.GetMoviesAsync(includeMovies);
+
             return Ok(movieDTOs);
          }
 
    
 
-        [HttpGet("{title} Name = \"RouteByTitle\"")]
+      /*  [HttpGet("{title} Name = \"RouteByTitle\"")]
          public async Task<ActionResult<IEnumerable<MovieDetailsDTO>>> GetMoviesByTitle(string title)
                 {
-                  /*  var moviesByTitle = await _context.Movies.ProjectTo<MovieDetailsDTO>(_mapper.ConfigurationProvider).ToListAsync();
+                  *//*  var moviesByTitle = await _context.Movies.ProjectTo<MovieDetailsDTO>(_mapper.ConfigurationProvider).ToListAsync();
 
                     if (!string.IsNullOrWhiteSpace(title))
                     {
                         moviesByTitle = moviesByTitle.Where(m => m.Title.Contains(title, StringComparison.OrdinalIgnoreCase)).ToList();
-                    }*/
+                    }*//*
                   var movies= await _uow.Movie.GetMoviesAsync(trackChanges: false);
              var moviesByTitle =  _mapper.Map<IEnumerable<MovieDetailsDTO>>(movies)
                  .Where(m => m.Title.Contains( title, StringComparison.OrdinalIgnoreCase))
@@ -68,10 +75,10 @@ namespace MovieCardsAPI.Controllers
                         }
 
                 // Filter the movies by genre before projecting to DTO
-                /* var moviesByGenre = await _context.Movies
+                *//* var moviesByGenre = await _context.Movies
                      .Where(m => m.MovieGenres.Any(mg => mg.Genre.Name.ToLower() == genre.ToLower()))
                      .ProjectTo<MovieDetailsDTO>(_mapper.ConfigurationProvider)
-                     .ToListAsync();*/
+                     .ToListAsync();*//*
                 var moviesByGenre = await _uow.Movie.GetMoviesByGenreAsync(genre);
                
                                       
@@ -183,9 +190,9 @@ namespace MovieCardsAPI.Controllers
                    }
                 }
 
-                /*var movies = await query.ProjectTo<MovieDetailsDTO>(_mapper.ConfigurationProvider).ToListAsync();
+                *//*var movies = await query.ProjectTo<MovieDetailsDTO>(_mapper.ConfigurationProvider).ToListAsync();
 
-            return Ok(movies);*/
+            return Ok(movies);*//*
                 var moviesDetailsDTO = _mapper.Map<IEnumerable<MovieDetailsDTO>>(query); 
 
             return Ok(moviesDetailsDTO);
@@ -211,7 +218,7 @@ namespace MovieCardsAPI.Controllers
             await _uow.CompleteAsync();
 
 
-            /*return NoContent();*/
+            *//*return NoContent();*//*
             return Ok(_mapper.Map<MovieDTO>(existingMovie));// For demo!
         }
 
@@ -221,7 +228,7 @@ namespace MovieCardsAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<MovieDTO>> CreateMovie(Guid id, MovieCreateDTO dto)
         {
-            /*
+            *//*
              If we remove [ApiController] 
              Then we should validate/manage manually by ourselves
              if(!ModelState.isValid)
@@ -229,11 +236,11 @@ namespace MovieCardsAPI.Controllers
              return BadRequest();
              }
              
-             */
+             *//*
             // Ensure that all referenced IDs are valid
-            /*    if (!await _context.Directors.AnyAsync(d => d.Id == dto.DirectorId) ||
+            *//*    if (!await _context.Directors.AnyAsync(d => d.Id == dto.DirectorId) ||
                     !await _context.Actors.AnyAsync(a => dto.ActorIds.Contains(a.Id)) ||
-                    !await _context.Genres.AnyAsync(g => dto.GenreIds.Contains(g.Id))) */
+                    !await _context.Genres.AnyAsync(g => dto.GenreIds.Contains(g.Id))) *//*
             // Ensure that all referenced IDs are valid
             if (!await _uow.Movie.DirectorExistsAsync(dto.DirectorId) ||
                 !await _uow.Movie.ActorsExistAsync(dto.ActorIds) ||
@@ -246,7 +253,7 @@ namespace MovieCardsAPI.Controllers
             var movie = _mapper.Map<Movie>(dto);
 
 
-            /* _context.Movies.Add(movie);*/
+            *//* _context.Movies.Add(movie);*//*
             // Create the movie using the repository
             await _uow.Movie.CreateAsync(movie);
             // Save changes via Unit of Work
@@ -259,10 +266,10 @@ namespace MovieCardsAPI.Controllers
         }
         // DELETE: api/movies/{id}
         [HttpDelete("{id:guid}")]
-        /* SWAGGER 
+        *//* SWAGGER 
           [ProducesResponseType(StatusCodes.Status204NoContent)]
           [ProducesResponseType(StatusCodes.Status404NotFound)]
-        */
+        *//*
         public async Task<IActionResult> DeleteMovie(Guid id)
         {
             var movie = await _uow.Movie.GetMovieAsync(id, trackChanges:true);
@@ -270,28 +277,28 @@ namespace MovieCardsAPI.Controllers
             if (movie == null)   return NotFound();
             
 
-           /* _context.Movies.Remove(movie);*/
+           *//* _context.Movies.Remove(movie);*//*
             _uow.Movie.Delete(movie);
             await _uow.CompleteAsync();
 
             return NoContent();
         }
-        /*
+        *//*
                 [HttpPatch("{id:guid")]
-                public async Task<ActionResult> PtachMovies(Guid id)*/
+                public async Task<ActionResult> PtachMovies(Guid id)*//*
 
       
 
         [HttpGet("{id:guid}/details")]
         public async Task<ActionResult<MovieDetailsDTO>> GetMovieDetails(Guid id)
         {
-            /*  var dto = await _mapper.ProjectTo<MovieDetailsDTO>(_context.Movies.Where(m => m.Id != id)).FirstOrDefaultAsync();*/
+            *//*  var dto = await _mapper.ProjectTo<MovieDetailsDTO>(_context.Movies.Where(m => m.Id != id)).FirstOrDefaultAsync();*//*
             var movie = await _uow.Movie.GetMovieAsync(id, trackChanges: true);
 
             if (movie == null) return NotFound();
             var movieDTO = _mapper.Map<MovieDetailsDTO>(movie);
 
             return Ok(movieDTO);
-        }
+        }*/
     }
 }

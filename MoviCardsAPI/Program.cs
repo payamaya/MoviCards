@@ -2,6 +2,7 @@ using Domain.Contracts;
 using MovieCardsAPI.Extensions;
 using Movies.Infrastructure.Data;
 using Movies.Infrastructure.Repository;
+using Service;
 
 
 public class Program
@@ -20,9 +21,8 @@ public class Program
         // From extensions folder 
         builder.Services.ConfigureCors();
         builder.Services.ConfigureOpenApi();
-        // Repository folder
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
+        builder.Services.AddScoped<IServiceManager, ServiceManager>();
 
         var app = builder.Build();
         // Configure the HTTP request pipline
