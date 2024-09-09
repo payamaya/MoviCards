@@ -25,11 +25,12 @@ public class MovieService :IMovieService
         {
             var movie = await _uow.Movie.GetMovieAsync(id, trackChanges: false);
 
-         /*   if (movie == null)
-            {
-               /// ToDo: Fix later return NotFound();
-            }*/
-            return _mapper.Map<MovieDTO>(movie);
+        if (movie == null)
+        {
+            /// ToDo: Fix later return NotFound();
+            throw new NullReferenceException("Hej");
+        }
+        return _mapper.Map<MovieDTO>(movie);
         }
     // Implementation for getting movies by title
     public async Task<IEnumerable<MovieDetailsDTO>> GetMoviesByTitleAsync(string title, bool trackChanges = false)

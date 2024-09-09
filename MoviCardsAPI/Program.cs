@@ -27,6 +27,9 @@ public class Program
 
         var app = builder.Build();
         // Configure the HTTP request pipline
+        app.ConfigureExceptionHandler();
+
+
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
@@ -42,7 +45,7 @@ public class Program
 
         app.MapControllers();
 
-        using (var scope = app.Services.CreateScope())
+    /*    using (var scope = app.Services.CreateScope())
         {
             var services = scope.ServiceProvider;
             var context = services.GetRequiredService<MovieCardsContext>();
@@ -51,7 +54,7 @@ public class Program
 
             // Uncomment and adjust if necessary
             // await AddSampleData(context);
-        }
+        }*/
 
         app.Run();
     }
