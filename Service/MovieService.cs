@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Domain.Contracts;
+using Domain.Models.Exceptions;
 using Movies.Shared.DTOs;
 using Service.Contracts;
 namespace Service;
@@ -25,13 +26,12 @@ public class MovieService :IMovieService
         {
             var movie = await _uow.Movie.GetMovieAsync(id, trackChanges: false);
 
-        if (movie == null)
-        {
-            /// ToDo: Fix later return NotFound();
-            throw new NullReferenceException("Hej");
-        }
+        if (movie == null) throw new MovieNotFoundException(id);
+        
         return _mapper.Map<MovieDTO>(movie);
+
         }
+
     // Implementation for getting movies by title
     public async Task<IEnumerable<MovieDetailsDTO>> GetMoviesByTitleAsync(string title, bool trackChanges = false)
     {
