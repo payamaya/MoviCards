@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Movies.Infrastructure.Repository
 {
-    public class MovieRepository: RepositoryBase<Movie> ,IMovieRepository
+    public class MovieRepository : RepositoryBase<Movie>, IMovieRepository
     {
 
         public MovieRepository(MovieCardsContext context): base(context) { }
@@ -24,6 +24,11 @@ namespace Movies.Infrastructure.Repository
             throw new NotImplementedException();
         }
 
+        public Task<bool> GetActorsAsync(Guid movieId, bool v)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<Movie?> GetMovieAsync(Guid id, bool trackChanges)
         {
             return await FindByCondition(m => m.Id.Equals(id),trackChanges)
@@ -37,10 +42,17 @@ namespace Movies.Infrastructure.Repository
                                  : await FindAll(trackChanges).ToListAsync();
         }
 
-        public Task<IEnumerable<Movie>> GetMoviesByGenreAsync(string genre)
+        public async Task<IEnumerable<Movie>> GetMoviesByGenreAsync(string genre)
         {
-            throw new NotImplementedException();
+            // Convert genre to lowercase to perform a case-insensitive comparison
+            var lowerGenre = genre.ToLower();
+
+            return await Context.Movies
+                .Where(m => m.MovieGenres.Any(mg => mg.Genre.Name.ToLower() == lowerGenre))
+                .ToListAsync();
         }
+
+
 
 
         /*      // Check if the Director exists

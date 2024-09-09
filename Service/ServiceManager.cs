@@ -1,4 +1,5 @@
-﻿using Domain.Contracts;
+﻿using AutoMapper;
+using Domain.Contracts;
 using Service.Contracts;
 
 namespace Service
@@ -14,15 +15,15 @@ namespace Service
 
         public IActorService ActorService => _actorService.Value;
 
-        public ServiceManager(IUnitOfWork uow)
+        public ServiceManager(IUnitOfWork uow, IMapper mapper)
         {
             if (uow is null)
             {
                 throw new ArgumentNullException(nameof(uow));
             }
 
-            _movieService = new Lazy<IMovieService>(() => new MovieService(uow));
-            _actorService = new Lazy<IActorService>(() => new ActorService(uow));
+            _movieService = new Lazy<IMovieService>(() => new MovieService(uow, mapper));
+            _actorService = new Lazy<IActorService>(() => new ActorService(uow,mapper));
 
         }
     }

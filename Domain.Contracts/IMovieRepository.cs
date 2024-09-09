@@ -16,6 +16,6 @@ namespace Domain.Contracts
         Task<bool> DirectorExistsAsync(Guid directorId);
         Task<bool> ActorsExistAsync(List<Guid> actorIds);
         Task<bool> GenresExistAsync(List<Guid> genreIds);
-        Task<bool> GetActorsAsync(Guid movieId, bool v);
+        Task<bool> GetActorsAsync(Guid movieId, bool actorIds);
     }
 }
