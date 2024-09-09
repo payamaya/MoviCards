@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Domain.Models.Entities;
+using Domain.Contracts;
 
 namespace MovieCardsAPI.Controllers
 {
@@ -14,34 +15,32 @@ namespace MovieCardsAPI.Controllers
 
     public class ActorsController : ControllerBase
     {
-        private readonly MovieCardsContext _context;
+        //private readonly MovieCardsContext _context;
+        private readonly IUnitOfWork _uow;
+        private readonly IMapper _mapper;
 
-        public ActorsController(MovieCardsContext context)
+        public ActorsController(IUnitOfWork uow, IMapper mapper)
         {
-            _context = context;
+            _uow = uow;
+            _mapper = mapper;
         }
 
         // GET: api/Actors
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Actor>>> GetActors(Guid movieId)
         {
-            var movieExists = await _context.Movies.AnyAsync(x => x.Id == movieId);
+            var movieExists = await _uow.Actor.GetActorsAsync( movieId, false);
 
-            if (!movieExists) return NotFound($"Movie with ID {movieId} not found.");
+            if (movieExists is null) return NotFound($"Movie with ID {movieId} not found.");
 
-            var actors = await _context.Actors
-                        .Where(a => a.MovieActors
-                        .Any(ma => ma.MovieId == movieId))
-                        .ToListAsync();
-            if (!actors.Any())
-            {
-                return NotFound($"No actors found for the movie with ID {movieId}.");
-            }
-            return await _context.Actors.ToListAsync();
+            var actors = await _uow.Actor.GetMovieAsync(movieId, false);
+            var actorDTOs = _mapper.Map<IEnumerable<Actor>>(actors);
+
+            return Ok(actorDTOs);
         }
 
         // GET: api/Actors/5
-        [HttpGet("{id}")]
+   /*     [HttpGet("{id}")]
         public async Task<ActionResult<Actor>> GetActor(Guid id)
         {
             var actor = await _context.Actors.FindAsync(id);
@@ -52,7 +51,7 @@ namespace MovieCardsAPI.Controllers
             }
 
             return actor;
-        }
+        }*/
 
         // PUT: api/Actors/5
 /*        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
