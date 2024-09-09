@@ -3,6 +3,7 @@ using MovieCardsAPI.Extensions;
 using Movies.Infrastructure.Data;
 using Movies.Infrastructure.Repository;
 using Service;
+using Movies.Presentation;
 
 
 public class Program
@@ -14,8 +15,8 @@ public class Program
         /* Add services to the container*/
         builder.Services.ConfigureSql(builder.Configuration);
         builder.Services.AddControllers(configure => configure.ReturnHttpNotAcceptable=true)
-          /*  .AddXmlDataContractSerializerFormatters()*/
-            .AddNewtonsoftJson();
+            .AddNewtonsoftJson()
+            .AddApplicationPart(typeof(AssemblyReference).Assembly);
         
         builder.Services.AddAutoMapper(typeof(MapperProfile));
         // From extensions folder 

@@ -7,9 +7,9 @@ namespace Service.Contracts
 {
     public interface IActorService
     {
-        Task<IEnumerable<ActorDTO>> GetActorsAsync(Guid movieId, 
-bool trackChanges = false);
+   
 
-        Task<ActorDTO> GetActorAsync(Guid id,bool trackChnages = false);
+     /*   Task<ActorDTO> GetActorAsync(Guid id,bool trackChnages = false);*/
+        Task<IEnumerable<ActorDTO>> GetActorsAsync(Guid movieId, bool trackChnages = false);
     }
 }

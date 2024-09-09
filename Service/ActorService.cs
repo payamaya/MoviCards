@@ -19,14 +19,18 @@ namespace Service
             _mapper = mapper;
         }
 
-        public Task<ActorDTO> GetActorAsync(Guid id, bool trackChnages = false)
+      /*  public Task<ActorDTO> GetActorAsync(Guid id, bool trackChnages = false)
         {
             throw new NotImplementedException();
-        }
+        }*/
 
         // Method to get actors for a specific movie
         public async Task<IEnumerable<ActorDTO>> GetActorsAsync(Guid movieId, bool trackChanges = false)
         {
+            var movieExists = await _uow.Movie.GetMovieAsync(movieId,trackChanges);
+
+            if (movieExists == null) return null!;
+
             var actors = await _uow.Actor.GetActorsAsync(movieId, trackChanges); // Pass movieId correctly
             return _mapper.Map<IEnumerable<ActorDTO>>(actors); // Map actors to ActorDTO
         }

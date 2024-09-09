@@ -1,5 +1,4 @@
 ﻿
-
 using Microsoft.AspNetCore.Mvc;
 using Movies.Shared.DTOs;
 using Service;
@@ -264,8 +263,8 @@ public class MoviesController : ControllerBase
     // DELETE: api/movies/{id}
     [HttpDelete("{id:guid}")]
    //SWAGGER
-   [ProducesResponseType(StatusCodes.Status204NoContent)]
-   [ProducesResponseType(StatusCodes.Status404NotFound)]
+   //[ProducesResponseType(StatusCodes.Status204NoContent)]
+   //[ProducesResponseType(StatusCodes.Status404NotFound)]
 
    public async Task<IActionResult> DeleteMovie(Guid id)
    {

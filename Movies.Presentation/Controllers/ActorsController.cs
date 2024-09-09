@@ -22,12 +22,12 @@ namespace MovieCardsAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ActorDTO>>> GetActors(Guid movieId)
         {
-            var actorDTOs = await _seviceManager.ActorService.GetActorsAsync(movieId);
+            IEnumerable<ActorDTO> actorDTOs = await _seviceManager.ActorService.GetActorsAsync(movieId);
             return Ok(actorDTOs);
         }
 
         // GET: api/Actors/5
-        [HttpGet("{id:guid}")]
+     /*   [HttpGet("{id:guid}")]
         public async Task<ActionResult<ActorDTO>> GetActor(Guid id)
         {
             var actorDto = await _seviceManager.ActorService.GetActorAsync(id);
@@ -35,7 +35,7 @@ namespace MovieCardsAPI.Controllers
 
             return Ok(actorDto);
         }
-
+*/
         /*    // PUT: api/Actors/5
             // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
             [HttpPut("{id}")]
