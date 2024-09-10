@@ -15,16 +15,14 @@ namespace Service
 
         public IActorService ActorService => _actorService.Value;
 
-        public ServiceManager(IUnitOfWork uow, IMapper mapper)
+        public ServiceManager(Lazy<IMovieService> movieService, Lazy<IActorService> actorService)
         {
-            if (uow is null)
-            {
-                throw new ArgumentNullException(nameof(uow));
-            }
+            
 
-            _movieService = new Lazy<IMovieService>(() => new MovieService(uow, mapper));
-            _actorService = new Lazy<IActorService>(() => new ActorService(uow,mapper));
+            _movieService = movieService;
+            _actorService = actorService;
 
         }
     }
 }
+ 

@@ -22,13 +22,14 @@ public class Program
         // From extensions folder 
         builder.Services.ConfigureCors();
         builder.Services.ConfigureOpenApi();
-        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-        builder.Services.AddScoped<IServiceManager, ServiceManager>();
+        /*     builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+             builder.Services.AddScoped<IServiceManager, ServiceManager>();*/
+        builder.Services.ConfigureServices();
+        builder.Services.ConfigureRepositories();
 
         var app = builder.Build();
         // Configure the HTTP request pipline
         app.ConfigureExceptionHandler();
-
 
         if (app.Environment.IsDevelopment())
         {
