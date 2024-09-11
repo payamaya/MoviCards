@@ -4,6 +4,7 @@ using Movies.Infrastructure.Data;
 using Movies.Infrastructure.Repository;
 using Service;
 using Movies.Presentation;
+using Microsoft.AspNetCore.Identity;
 
 
 public class Program
@@ -27,7 +28,21 @@ public class Program
         builder.Services.ConfigureServices();
         builder.Services.ConfigureRepositories();
 
+        builder.Services.AddAuthentication();
+        builder.Services.AddIdentityCore<Actor>(opt =>
+        {
+            opt.Password.RequireDigit = false;
+            opt.Password.RequireLowercase = false;
+            opt.Password.RequireUppercase = false;
+            opt.Password.RequireNonAlphanumeric = false;
+            opt.Password.RequiredLength = 3;
+            //opt.User.RequireUniqueEmail = false;
+        }).AddRoles<IdentityRole>()
+          .AddEntityFrameworkStores<MovieCardsContext>()
+          .AddDefaultTokenProviders();    
+
         var app = builder.Build();
+
         // Configure the HTTP request pipline
         app.ConfigureExceptionHandler();
 
@@ -42,20 +57,10 @@ public class Program
 
         app.UseCors("AllowAll");
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllers();
-
-    /*    using (var scope = app.Services.CreateScope())
-        {
-            var services = scope.ServiceProvider;
-            var context = services.GetRequiredService<MovieCardsContext>();
-
-            context.Database.EnsureCreated();
-
-            // Uncomment and adjust if necessary
-            // await AddSampleData(context);
-        }*/
 
         app.Run();
     }

@@ -1,7 +1,13 @@
 ﻿using Domain.Models.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+namespace Movies.Infrastructure.Data
+{
 
-public class MovieCardsContext : DbContext
+
+  //public class MovieCardsContext : IdentityDbContext<ApplicationUser, IdentityRole, string>
+    public class MovieCardsContext : IdentityDbContext <Actor, IdentityRole, string>
 {
     /*   public DbSet<Movie> Movies { get; set; }*/
     // Type parameter can be generic
@@ -67,6 +73,6 @@ public class MovieCardsContext : DbContext
         );
     }
 
-
+        }
 
 }
