@@ -1,6 +1,7 @@
 ﻿using Domain.Contracts;
 using Domain.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using Movies.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;

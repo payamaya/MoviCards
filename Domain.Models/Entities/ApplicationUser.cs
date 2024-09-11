@@ -5,7 +5,7 @@ using System.Reflection.Metadata;
 
 namespace Domain.Models.Entities
 {
-    public class Actor :IdentityUser
+    public class ApplicationUser :IdentityUser
     {
         //[Key]
         //public Guid Id { get; set; }
@@ -20,7 +20,7 @@ namespace Domain.Models.Entities
         // Navigation property
         public ContactInformation ContactInformation { get; set; }
 
-        // Navigation property for the many-to-many relationship with Movies property for the join table
+        // Navigation property for the many-to-many relationship with Movies
         public ICollection<MovieActor>? MovieActors { get; set; } = new List<MovieActor>();
 
     }

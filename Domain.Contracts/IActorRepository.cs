@@ -4,12 +4,12 @@ namespace Domain.Contracts
 {
     public interface IActorRepository
     {
-        Task<Actor?> GetMovieAsync(Guid movieId , Guid id, bool trackChanges);
-        Task<IEnumerable<Actor>> GetActorsAsync(Guid movieId, bool trackChanges);
+        Task<ApplicationUser?> GetMovieAsync(Guid movieId , Guid id, bool trackChanges);
+        Task<IEnumerable<ApplicationUser>> GetActorsAsync(Guid movieId, bool trackChanges);
 /*        Task<bool> ActorsExistAsync(List<Guid> actorIds);*/
-        Task CreateAsync(Actor actor);
-        void Update(Actor actor);
-        void Delete(Actor actor);
+        Task CreateAsync(ApplicationUser actor);
+        void Update(ApplicationUser actor);
+        void Delete(ApplicationUser actor);
   
         /*   Task<bool> DirectorExistsAsync(Guid directorId);
 Task<bool> ActorsExistAsync(List<Guid> actorIds);

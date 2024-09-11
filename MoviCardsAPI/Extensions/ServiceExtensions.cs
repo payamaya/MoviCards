@@ -1,4 +1,5 @@
 ﻿using Domain.Contracts;
+using Movies.Infrastructure.Data;
 using Movies.Infrastructure.Repository;
 using Service;
 using Service.Contracts;

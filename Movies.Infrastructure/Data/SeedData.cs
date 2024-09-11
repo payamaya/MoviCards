@@ -1,26 +1,37 @@
 ﻿using Bogus;
 using Domain.Models.Entities;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Movies.Infrastructure.Data
 {
     public static class SeedData
     {
+        private static UserManager<ApplicationUser> userManager = null!;
+        private static RoleManager<IdentityRole> roleManager = null!;
+        private static IConfiguration configuration = null!;
+        private const string actorRole = "Actor";
+        private const string adminRole = "Admin";
+
         public static async Task SeedDataAsync(this IApplicationBuilder builder)
         {
             using (var scope = builder.ApplicationServices.CreateScope())
             {
                 var servicesProvider = scope.ServiceProvider;
                 var db = servicesProvider.GetRequiredService<MovieCardsContext>();
-
-                await db.Database.MigrateAsync();
-
                 if (await db.Movies.AnyAsync()) return;
+
+                userManager = servicesProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                roleManager = servicesProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                configuration = servicesProvider.GetRequiredService<IConfiguration>();
 
                 try
                 {
+                    await CreateRolesAsync(new[] { adminRole, actorRole });
+
                     // Seed Directors first
                     var directors = GenerateDirectors(10).ToList();
                     await db.Directors.AddRangeAsync(directors);
@@ -37,7 +48,7 @@ namespace Movies.Infrastructure.Data
 
                     // Seed Movies
                     var movies = GenerateMovies(4, directors, actors, genres);
-                    await db.Movies.AddRangeAsync(movies);
+                    await db.Movies.AddRangeAsync((IEnumerable<Movie>)movies);
 
                     await db.SaveChangesAsync();
                 }
@@ -46,6 +57,17 @@ namespace Movies.Infrastructure.Data
                     // Handle exceptions
                     throw;
                 }
+            }
+        }
+
+        private static async Task CreateRolesAsync(string[] roleNames)
+        {
+            foreach (var roleName in roleNames)
+            {
+                if (await roleManager.RoleExistsAsync(roleName)) continue;
+                var role = new IdentityRole { Name = roleName };
+                var result = await roleManager.CreateAsync(role);
+                if (!result.Succeeded) throw new Exception(string.Join("\n", result.Errors));
             }
         }
 
@@ -60,12 +82,11 @@ namespace Movies.Infrastructure.Data
             return faker.Generate(count);
         }
 
-        private static IEnumerable<Actor> GenerateActors(int count)
+        private static IEnumerable<ApplicationUser> GenerateActors(int count)
         {
-            var faker = new Faker<Actor>("sv").Rules((f, a) =>
+            var faker = new Faker<ApplicationUser>("sv").Rules((f, a) =>
             {
                 a.Name = f.Person.FullName;
-                // Generate ContactInformation for each actor
                 a.ContactInformation = new ContactInformation
                 {
                     PhoneNumber = f.Phone.PhoneNumber(),
@@ -77,7 +98,6 @@ namespace Movies.Infrastructure.Data
             return faker.Generate(count);
         }
 
-
         private static IEnumerable<Genre> GenerateGenres(int count)
         {
             var faker = new Faker<Genre>("sv").Rules((f, g) =>
@@ -88,7 +108,7 @@ namespace Movies.Infrastructure.Data
             return faker.Generate(count);
         }
 
-        private static IEnumerable<Movie> GenerateMovies(int count, List<Director> directors, List<Actor> actors, List<Genre> genres)
+        private static async Task GenerateMovies(int count, List<Director> directors, List<ApplicationUser> actors, List<Genre> genres)
         {
             var movies = new List<Movie>();
             var faker = new Faker<Movie>("sv").Rules((f, m) =>
@@ -102,23 +122,39 @@ namespace Movies.Infrastructure.Data
                 m.MovieGenres = GenerateMovieGenres(genres, m.Id).ToList();
             });
 
-            movies.AddRange(faker.Generate(count));
+            var moviesList = faker.Generate(count);
 
-            return movies;
+            // Generate user roles
+            var passWord = configuration["password"];
+            if (string.IsNullOrEmpty(passWord))
+                throw new Exception("password not exist in config");
+
+            foreach (var actor in actors)
+            {
+                var result = await userManager.CreateAsync(actor, passWord);
+                if (!result.Succeeded) throw new Exception(string.Join("\n", result.Errors));
+
+                // Assign role based on some condition or directly set to "Actor"
+                await userManager.AddToRoleAsync(actor, actorRole);
+            }
+
+            foreach (var movie in moviesList)
+            {
+                // Add movie to the list
+                movies.Add(movie);
+            }
         }
 
-        private static IEnumerable<MovieActor> GenerateMovieActors(List<Actor> actors, Guid movieId)
+        private static IEnumerable<MovieActor> GenerateMovieActors(List<ApplicationUser> actors, Guid movieId)
         {
             var faker = new Faker<MovieActor>("sv").Rules((f, ma) =>
             {
-                ma.ActorId = f.PickRandom(actors).Id; // Assuming ActorId is Guid
+                ma.ActorId = f.PickRandom(actors).Id; // ActorId is now a string
                 ma.MovieId = movieId; // Set correct MovieId
             });
 
             return faker.Generate(2); // Generate 2 actors per movie
         }
-   
-
 
         private static IEnumerable<MovieGenre> GenerateMovieGenres(List<Genre> genres, Guid movieId)
         {
@@ -130,6 +166,5 @@ namespace Movies.Infrastructure.Data
 
             return faker.Generate(1); // Generate 1 genre per movie
         }
-
     }
 }

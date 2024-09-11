@@ -10,15 +10,17 @@ namespace Domain.Models.Entities
         public Guid Id { get; set; }
 
         [Required]
-        [MaxLength(100)]
-        public string? Email { get; set; }
+        [EmailAddress]
+        public string Email { get; set; }
 
         [Required]
-        public string? PhoneNumber { get; set; }
+        [Phone]
+        public string PhoneNumber { get; set; }
 
-        public Guid DirectorId { get; set; } // Foreign key property
+        // Foreign Key for ApplicationUser (optional, depends on how you want the relationship)
+        public Guid? DirectorId { get; set; }
 
-        // Navigation property
+        // Navigation property to link to a Director (one-to-one relationship)
         public Director? Director { get; set; }
     }
 }
